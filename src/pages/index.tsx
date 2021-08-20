@@ -1,5 +1,3 @@
-import { Button } from '@chakra-ui/react'
+import AppIndex from '@/components/AppIndex'
 
-export default function Home() {
-  return <Button>Hello World</Button>
-}
+export default AppIndex
