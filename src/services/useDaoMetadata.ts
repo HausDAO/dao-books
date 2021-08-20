@@ -27,7 +27,7 @@ const useDatoMetadata = (
   const fetch = () => {
     setLoading(true)
     api()
-      .then((data) => setData(data[0]))
+      .then((data: any) => setData(data[0]))
       .catch((body) => setErrors(body))
       .finally(() => setLoading(false))
   }
