@@ -5,4 +5,4 @@
 // export const PUBLIC_VAR = publicRuntimeConfig.PUBLIC_VAR
 // export const SERVER_VAR = serverRuntimeConfig.SERVER_VAR
 
-export {}
+export const DAO_HAUS_API_URL = 'https://data.daohaus.club/dao'

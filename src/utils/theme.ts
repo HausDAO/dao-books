@@ -15,6 +15,12 @@ const colors = {
   },
 }
 export const theme = extendTheme(
-  { colors },
+  {
+    colors,
+    fonts: {
+      heading: 'Inter',
+      body: 'Inter',
+    },
+  },
   withDefaultColorScheme({ colorScheme: 'brand' })
 )
