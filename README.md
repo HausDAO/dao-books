@@ -23,3 +23,12 @@ In order to do that, I had to compromise on Automatic Static Optimisation across
 1. Add your variable to next.config.js, declare type in global.d.ts
 2. open constants.ts and export your variable.
 3. Import the variable from constants.
+
+### How to use Tailwind + Chakra UI
+
+Chakra UI borrows a lot of concepts from Tailwind and you will find their API very similar. However, after using chakra for few hours, I realised the layout features are not as rich as I thought and I had to install tailwind.
+
+1. Use Tailwind CSS for layout and typography, avoid Chakra UI components + Typography
+2. Use Chakra UI for all other components i.e. Forms, Data Display, Feedback, Overlay, Disclosure, Media and Icons.
+3. In case you have a custom need, you might want to explore headless-ui/react package and build your UI.
+4. Feel free to add Tailwind plugins, but make sure they dont conflict with Chakra UI
