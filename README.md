@@ -32,3 +32,17 @@ Chakra UI borrows a lot of concepts from Tailwind and you will find their API ve
 2. Use Chakra UI for all other components i.e. Forms, Data Display, Feedback, Overlay, Disclosure, Media and Icons.
 3. In case you have a custom need, you might want to explore headless-ui/react package and build your UI.
 4. Feel free to add Tailwind plugins, but make sure they dont conflict with Chakra UI
+
+### VS Code extensions that you should install
+
+Name: Code Spell Checker
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+
+Name: ESLint
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+
+Name: Prettier - Code formatter
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
+
+Name: Tailwind CSS IntelliSense
+VS Marketplace Link: https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss
