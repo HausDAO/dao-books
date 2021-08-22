@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.4.8",
     "@chakra-ui/react": "^1.6.6",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/inter": "^4.5.0",
     "framer-motion": "^4",
+    "graphql": "^15.5.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "next": "11.1.0",
