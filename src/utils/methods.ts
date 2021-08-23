@@ -26,14 +26,16 @@ export const findChildByType = (
 }
 
 export const convertTokenValueToUSD = (tokenBalance: TokenBalance): number => {
+  // TODO: fetch it from a reliable source
   const TOKEN_VALUES_IN_USD: { [symbol: string]: number } = {
     RAID: 0.01,
-    XDAI: 0.02,
+    XDAI: 1,
+    WXDAI: 1,
   }
 
   const value = TOKEN_VALUES_IN_USD[tokenBalance.token.symbol]
   return (
-    (value * tokenBalance.balance) /
+    (value * Number(tokenBalance.tokenBalance)) /
     Math.pow(10, Number(tokenBalance.token.decimals))
   )
 }

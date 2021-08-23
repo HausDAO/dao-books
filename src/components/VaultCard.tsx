@@ -13,10 +13,9 @@ export const VaultCard: FC<VaultCardProps> = ({
   tokenBalances,
 }) => {
   // TODO: show copy icon to copy the address
-  const USDBalance = tokenBalances.reduce(
-    (usd, tokenBalance) => convertTokenValueToUSD(tokenBalance) + usd,
-    0
-  )
+  const USDBalance = tokenBalances.reduce((usd, tokenBalance) => {
+    return convertTokenValueToUSD(tokenBalance) + usd
+  }, 0)
 
   return (
     <div className="inline-flex rounded-md shadow flex-col p-2 bg-gray-200">

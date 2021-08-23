@@ -11,7 +11,8 @@ const SUBGRAPH_MAP: { [network: string]: string } = {
 
 const fetchGraph = async <T, V>(
   network: string,
-  query: string
+  query: string,
+  variables?: V
 ): Promise<ApolloQueryResult<T>> => {
   const client = new ApolloClient({
     uri: SUBGRAPH_MAP[network],
@@ -20,6 +21,7 @@ const fetchGraph = async <T, V>(
 
   return client.query<T, V>({
     query: gql(query),
+    variables,
   })
 }
 
