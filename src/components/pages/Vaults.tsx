@@ -5,6 +5,7 @@ import useDaoMetadata from '@/hooks/useDaoMetadata/useDaoMetadata'
 import { VaultCard } from '../VaultCard'
 import Link from 'next/link'
 import useOnchainData from '@/hooks/useOnchainData'
+import { Moloch } from '../../types/DAO'
 
 const QUERY = `
   query {
@@ -17,15 +18,19 @@ const QUERY = `
   }
 `
 
+type MolochData = {
+  moloches: Moloch[]
+}
+
 export const Vaults: FC = () => {
   const router = useRouter()
   const { id } = router.query
   const { data: daoMetadata, error, loading } = useDaoMetadata(id as string)
 
-  const { data: onchainData, loading: onchainLoading } = useOnchainData(
-    'xdai',
-    QUERY
-  )
+  const { data: onchainData, loading: onchainLoading } = useOnchainData<
+    MolochData,
+    unknown
+  >('xdai', QUERY)
 
   const handleGoToHome = () => {
     router.replace('/')

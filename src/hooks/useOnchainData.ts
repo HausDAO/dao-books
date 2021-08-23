@@ -1,21 +1,30 @@
 import { useState, useEffect } from 'react'
 import fetchGraph from '@/utils/fetchGraph'
+import { ApolloQueryResult } from '@apollo/client'
 
-const useOnchainData = (network: string, query: string): any => {
-  const [data, setData] = useState([])
+const useOnchainData = <T, V>(
+  network: string,
+  query: string
+): {
+  data: ApolloQueryResult<T> | undefined
+  loading: boolean
+  error: Error | undefined
+} => {
+  const [data, setData] = useState<ApolloQueryResult<T>>()
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error>()
 
   useEffect(() => {
     const fetchGraphData = async () => {
       setLoading(true)
-      const graphResult = await fetchGraph(network, query)
-        .then((data: any) => data)
-        .catch((err: any) => {
-          throw err
-        })
-        .finally(() => setLoading(false))
-
-      setData(graphResult)
+      try {
+        const graphResult = await fetchGraph<T, V>(network, query)
+        setData(graphResult)
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     fetchGraphData()
@@ -24,6 +33,7 @@ const useOnchainData = (network: string, query: string): any => {
   return {
     data,
     loading,
+    error,
   }
 }
 
