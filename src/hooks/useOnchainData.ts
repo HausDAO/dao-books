@@ -4,7 +4,8 @@ import { ApolloQueryResult } from '@apollo/client'
 
 const useOnchainData = <T, V>(
   network: string,
-  query: string
+  query: string,
+  variables?: V
 ): {
   data: ApolloQueryResult<T> | undefined
   loading: boolean
@@ -18,7 +19,7 @@ const useOnchainData = <T, V>(
     const fetchGraphData = async () => {
       setLoading(true)
       try {
-        const graphResult = await fetchGraph<T, V>(network, query)
+        const graphResult = await fetchGraph<T, V>(network, query, variables)
         setData(graphResult)
       } catch (error) {
         setError(error)

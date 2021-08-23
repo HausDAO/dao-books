@@ -1,47 +1,20 @@
-import { FC } from 'react'
-import { Button, Spinner } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
-import useDaoMetadata from '@/hooks/useDaoMetadata/useDaoMetadata'
-import { VaultCard } from '../VaultCard'
+import { Button } from '@chakra-ui/react'
+import { InferGetServerSidePropsType } from 'next'
 import Link from 'next/link'
-import useOnchainData from '@/hooks/useOnchainData'
-import { Moloch } from '../../types/DAO'
+import { useRouter } from 'next/router'
+import { getServerSideProps } from '../../pages/dao/[id]'
+import { VaultCard } from '../VaultCard'
 
-const QUERY = `
-  query {
-    moloches {
-      id
-      version
-      summoner
-      newContract
-    }
-  }
-`
-
-type MolochData = {
-  moloches: Moloch[]
-}
-
-export const Vaults: FC = () => {
+export const Vaults = ({
+  daoMetadata,
+  moloch,
+  minions,
+  error,
+}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const router = useRouter()
-  const { id } = router.query
-  const { data: daoMetadata, error, loading } = useDaoMetadata(id as string)
-
-  const { data: onchainData, loading: onchainLoading } = useOnchainData<
-    MolochData,
-    unknown
-  >('xdai', QUERY)
 
   const handleGoToHome = () => {
     router.replace('/')
-  }
-
-  if (loading || onchainLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spinner />
-      </div>
-    )
   }
 
   if (error) {
@@ -53,99 +26,51 @@ export const Vaults: FC = () => {
     )
   }
 
+  if (!moloch || !daoMetadata || !minions) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen space-y-2">
+        <p className="text-xl">Something went wrong</p>
+        <Button onClick={handleGoToHome}>Go to Home</Button>
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 space-y-3">
-      <h1 className="font-semibold text-3xl">{daoMetadata?.name}</h1>
-      <p className="text-xl">MOLOCHES: {JSON.stringify(onchainData)}</p>
+      <h1 className="font-semibold text-3xl">{daoMetadata.name}</h1>
       <h2 className="font-semibold text-2xl">DAO Treasury</h2>
-      <Link
-        href={`/dao/${daoMetadata?.contractAddress}/treasury/0xd83ac7d30495e1e1d2f42a0d796a058089719a45`}
-      >
+      <Link href={`/dao/${daoMetadata.contractAddress}/treasury`}>
         <a>
           <VaultCard
             name="DAO Treasury"
-            address="0xd83ac7d30495e1e1d2f42a0d796a058089719a45"
-            tokenBalances={[
-              {
-                balance: 500000000000000000,
-                token: {
-                  address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                  decimals: '18',
-                  symbol: 'RAID',
-                },
-              },
-              {
-                balance: 500000000000000000,
-                token: {
-                  address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                  decimals: '18',
-                  symbol: 'XDAI',
-                },
-              },
-            ]}
+            address={daoMetadata.contractAddress}
+            tokenBalances={moloch.tokenBalances}
           />
         </a>
       </Link>
-
-      <h2 className="font-semibold text-2xl">Minions</h2>
-      <div className="space-x-2">
-        <Link
-          href={`/dao/${daoMetadata?.contractAddress}/minion/0xd83ac7d30495e1e1d2f42a0d796a058089719a45`}
-        >
-          <a>
-            <VaultCard
-              name="Ape"
-              address="0xd83ac7d30495e1e1d2f42a0d796a058089719a45"
-              tokenBalances={[
-                {
-                  balance: 500000000000000000,
-                  token: {
-                    address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                    decimals: '18',
-                    symbol: 'RAID',
-                  },
-                },
-                {
-                  balance: 500000000000000000,
-                  token: {
-                    address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                    decimals: '18',
-                    symbol: 'XDAI',
-                  },
-                },
-              ]}
-            />
-          </a>
-        </Link>
-        <Link
-          href={`/dao/${daoMetadata?.contractAddress}/minion/0xd83ac7d30495e1e1d2f42a0d796a058089719a45`}
-        >
-          <a>
-            <VaultCard
-              name="Valhalla"
-              address="0xd83ac7d30495e1e1d2f42a0d796a058089719a45"
-              tokenBalances={[
-                {
-                  balance: 500000000000000000,
-                  token: {
-                    address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                    decimals: '18',
-                    symbol: 'RAID',
-                  },
-                },
-                {
-                  balance: 500000000000000000,
-                  token: {
-                    address: '0xd83ac7d30495e1e1d2f42a0d796a058089719a45',
-                    decimals: '18',
-                    symbol: 'XDAI',
-                  },
-                },
-              ]}
-            />
-          </a>
-        </Link>
-      </div>
+      {minions.length > 0 && (
+        <>
+          <h2 className="font-semibold text-2xl">Minions</h2>
+          <div className="space-x-2">
+            {minions.map((minion) => {
+              return (
+                <Link
+                  key={minion.minionAddress}
+                  href={`/dao/${daoMetadata.contractAddress}/minion/${minion.minionAddress}`}
+                >
+                  <a>
+                    <VaultCard
+                      name={minion.name}
+                      address={minion.minionAddress}
+                      tokenBalances={minion.tokenBalances}
+                    />
+                  </a>
+                </Link>
+              )
+            })}
+          </div>
+        </>
+      )}
     </div>
   )
 }
