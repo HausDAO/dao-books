@@ -1,19 +1,42 @@
 import { FC } from 'react'
 import { Button, Spinner } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import useDaoMetadata from '../../hooks/useDaoMetadata/useDaoMetadata'
+import useDaoMetadata from '@/hooks/useDaoMetadata/useDaoMetadata'
 import { VaultCard } from '../VaultCard'
 import Link from 'next/link'
+import useOnchainData from '@/hooks/useOnchainData'
+import { Moloch } from '../../types/DAO'
+
+const QUERY = `
+  query {
+    moloches {
+      id
+      version
+      summoner
+      newContract
+    }
+  }
+`
+
+type MolochData = {
+  moloches: Moloch[]
+}
+
 export const Vaults: FC = () => {
   const router = useRouter()
   const { id } = router.query
   const { data: daoMetadata, error, loading } = useDaoMetadata(id as string)
 
+  const { data: onchainData, loading: onchainLoading } = useOnchainData<
+    MolochData,
+    unknown
+  >('xdai', QUERY)
+
   const handleGoToHome = () => {
     router.replace('/')
   }
 
-  if (loading) {
+  if (loading || onchainLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner />
@@ -33,6 +56,7 @@ export const Vaults: FC = () => {
   return (
     <div className="p-4 space-y-3">
       <h1 className="font-semibold text-3xl">{daoMetadata?.name}</h1>
+      <p className="text-xl">MOLOCHES: {JSON.stringify(onchainData)}</p>
       <h2 className="font-semibold text-2xl">DAO Treasury</h2>
       <Link
         href={`/dao/${daoMetadata?.contractAddress}/treasury/0xd83ac7d30495e1e1d2f42a0d796a058089719a45`}
