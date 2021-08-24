@@ -5,6 +5,7 @@ import {
   ReactElement,
   ReactNode,
 } from 'react'
+import { getTokenUSDPrice } from '../services/getTokenUSDPrice'
 import { Token, TokenBalance } from '../types/DAO'
 
 // Join classes
@@ -25,17 +26,12 @@ export const findChildByType = (
   return undefined
 }
 
-export const convertTokenValueToUSD = (tokenBalance: TokenBalance): number => {
-  // TODO: fetch it from a reliable source
-  const TOKEN_VALUES_IN_USD: { [symbol: string]: number } = {
-    RAID: 0.01,
-    XDAI: 1,
-    WXDAI: 1,
-  }
-
-  const value = TOKEN_VALUES_IN_USD[tokenBalance.token.symbol]
+export const convertTokenValueToUSD = async (
+  tokenBalance: TokenBalance
+): Promise<number> => {
+  const usdPrice = await getTokenUSDPrice(tokenBalance.token.tokenAddress)
   return (
-    (value * Number(tokenBalance.tokenBalance)) /
+    (usdPrice * Number(tokenBalance.tokenBalance)) /
     Math.pow(10, Number(tokenBalance.token.decimals))
   )
 }

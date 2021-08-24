@@ -32,6 +32,7 @@ export const getMinions = async (
     cachedMinions: CachedMinion[]
   ): MinionWithTokenBalances[] => {
     return cachedMinions.map((cachedMinion) => {
+      // TODO: maybe we need to get the usd balance directly from this api
       return {
         minionAddress: cachedMinion.address,
         name: cachedMinion.name,

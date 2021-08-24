@@ -7,6 +7,9 @@ import {
 
 const SUBGRAPH_MAP: { [network: string]: string } = {
   xdai: 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai',
+  matic:
+    'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-matic',
+  mainnet: 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus',
 }
 
 const fetchGraph = async <T, V>(
