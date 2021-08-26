@@ -30,7 +30,8 @@ export const Home: FC = () => {
             <FormLabel htmlFor="address">Enter DAO Address</FormLabel>
             <Input id="address" {...register('address', { required: true })} />
             <FormHelperText>
-              You can find the DAO address from the URL.
+              You can find the DAO address from the URL of the DAO page on
+              app.daohaus.club.
             </FormHelperText>
             <FormErrorMessage>{errors.address?.message}</FormErrorMessage>
           </FormControl>
