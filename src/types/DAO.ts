@@ -23,3 +23,18 @@ export type Moloch = {
   minions: Minion[]
   tokenBalances: TokenBalance[]
 }
+
+export type MolochStatsBalance = {
+  id: string
+  timestamp: string
+  balance: number
+  tokenSymbol: string
+  tokenAddress: string
+  tokenDecimals: string
+  amount: number
+  payment: boolean
+  tribute: boolean
+  currentShares: number
+  currentLoot: number
+  action: string
+}

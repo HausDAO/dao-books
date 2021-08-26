@@ -1,9 +1,9 @@
 import { GetServerSidePropsContext } from 'next'
-import { Vaults } from '../../components/pages'
-import { getDAOMetadata } from '../../services/getDAOMetadata'
-import { getMinions } from '../../services/getMinions'
-import { Moloch } from '../../types/DAO'
-import fetchGraph from '../../utils/fetchGraph'
+import { Vaults } from '@/components/pages'
+import { getDAOMetadata } from '@/services/getDAOMetadata'
+import { getMinions } from '@/services/getMinions'
+import { Moloch } from '@/types/DAO'
+import fetchGraph from '@/utils/fetchGraph'
 
 export default Vaults
 

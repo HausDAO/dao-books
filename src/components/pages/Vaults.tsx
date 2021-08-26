@@ -37,11 +37,13 @@ export const Vaults = ({
 
   return (
     <div className="p-4 space-y-3">
-      <h1 className="font-semibold text-3xl">{daoMetadata.name}</h1>
       <div>
-        <h2 className="font-semibold text-2xl inline mr-3">DAO Treasury</h2>
+        <h1 className="font-semibold text-3xl inline mr-3">
+          {daoMetadata.name}
+        </h1>
         <Button onClick={handleGoToHome}>Switch Dao</Button>
       </div>
+      <h2 className="font-semibold text-2xl">DAO Treasury</h2>
       <Link href={`/dao/${daoMetadata.contractAddress}/treasury`}>
         <a>
           <VaultCard
