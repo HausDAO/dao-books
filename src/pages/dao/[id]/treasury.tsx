@@ -1,12 +1,36 @@
-import { startCase } from 'lodash'
+import { orderBy, startCase } from 'lodash'
 import { GetServerSidePropsContext } from 'next'
-import { Treasury, TreasuryTransaction } from '../../../components/pages'
+import {
+  TokenBalanceLineItem,
+  Treasury,
+  TreasuryTransaction,
+} from '../../../components/pages'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
-import { MolochStatsBalance } from '../../../types/DAO'
+import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
+import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
 import { convertTokenValueToUSD } from '../../../utils/methods'
 
 export default Treasury
+
+const GET_MOLOCH = `
+query moloch($contractAddr: String!) {
+  moloch(id: $contractAddr) {
+    id
+    minions {
+      minionAddress
+    }
+    tokenBalances(where: {guildBank: true}) {
+      token {
+        tokenAddress
+        symbol
+        decimals
+      }
+      tokenBalance
+    }
+  }
+}
+`
 
 const BALANCES = `
 query moloch($molochAddress: String!) {
@@ -30,7 +54,9 @@ query moloch($molochAddress: String!) {
   }
 }
 `
-
+type MolochData = {
+  moloch: Moloch
+}
 type MolochStatsBalancesData = {
   balances: MolochStatsBalance[]
 }
@@ -42,13 +68,20 @@ export const getServerSideProps = async (
 
   try {
     const daoMeta = await getDAOMetadata(daoAddress as string)
-
     const molochStatsBalances = await fetchStatsGraph<
       MolochStatsBalancesData,
       { molochAddress: string }
     >(daoMeta.network, BALANCES, {
       molochAddress: daoMeta.contractAddress,
     })
+
+    const moloch = await fetchGraph<MolochData, { contractAddr: string }>(
+      daoMeta.network,
+      GET_MOLOCH,
+      {
+        contractAddr: daoMeta.contractAddress,
+      }
+    )
 
     const mapMolochStatsToTreasuryTransaction = async (
       molochStatsBalances: MolochStatsBalance[]
@@ -125,14 +158,44 @@ export const getServerSideProps = async (
       return treasuryTransactions
     }
 
+    const mapMolochTokenBalancesToTokenBalanceLineItem = async (
+      molochTokenBalances: TokenBalance[]
+    ): Promise<TokenBalanceLineItem[]> => {
+      const tokenBalanceLineItems = await Promise.all(
+        molochTokenBalances.map(async (molochTokenBalance) => {
+          const usdValue = await convertTokenValueToUSD(molochTokenBalance)
+
+          const tokenValue =
+            Number(molochTokenBalance.tokenBalance) /
+            Math.pow(10, Number(molochTokenBalance.token.decimals))
+
+          return {
+            ...molochTokenBalance,
+            tokenValue,
+            usdValue,
+          }
+        })
+      )
+      return tokenBalanceLineItems
+    }
+
     const treasuryTransactions = await mapMolochStatsToTreasuryTransaction(
       molochStatsBalances.data.balances
+    )
+
+    const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
+      moloch.data.moloch.tokenBalances
     )
 
     return {
       props: {
         daoMetadata: daoMeta,
         treasuryTransactions,
+        tokenBalances: orderBy(
+          tokenBalances,
+          ['usdValue', 'tokenValue'],
+          ['desc', 'desc']
+        ),
       },
     }
   } catch (error) {

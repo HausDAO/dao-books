@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic'
 
 import { MultiLineCell, SelectColumnFilter } from '../table'
 import moment from 'moment'
+import { TokenBalance } from '../../types/DAO'
 // Making this client side because chart.js cannot render on server side
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
@@ -16,9 +17,11 @@ const Table = dynamic(() => import('@/components/table/Table'), {
 export const Treasury = ({
   daoMetadata,
   treasuryTransactions,
+  tokenBalances,
   error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
-  const columns = useMemo(() => COLUMNS, [])
+  const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
+  const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
   const router = useRouter()
 
   const handleGoToHome = () => {
@@ -51,18 +54,23 @@ export const Treasury = ({
         </h1>
       </div>
 
+      <h2 className="text-2xl">Transactions</h2>
       <Table
         // @ts-ignore - dont know why it doesnt work when using with dynamic import
-        columns={columns}
+        columns={transactionsColumns}
         data={treasuryTransactions || []}
         initialState={{
           pageSize: 20,
-          hiddenColumns: [
-            'eventType',
-            'location',
-            'additionalDescription',
-            'fileName',
-          ],
+        }}
+      />
+
+      <h2 className="text-2xl">Token Balances</h2>
+      <Table
+        // @ts-ignore - dont know why it doesnt work when using with dynamic import
+        columns={tokenBalancesColumns}
+        data={tokenBalances || []}
+        initialState={{
+          pageSize: 20,
         }}
       />
     </div>
@@ -81,7 +89,12 @@ export type TreasuryTransaction = {
   usdOut: number
 }
 
-const COLUMNS: Column<TreasuryTransaction>[] = [
+export type TokenBalanceLineItem = TokenBalance & {
+  tokenValue: number
+  usdValue: number
+}
+
+const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
   {
     Header: 'Date',
     Footer: 'Date',
@@ -116,13 +129,13 @@ const COLUMNS: Column<TreasuryTransaction>[] = [
     Footer: 'In',
     accessor: 'in',
     Cell: ({ row }: Cell<TreasuryTransaction>) => {
+      if (row.original.out > row.original.in) {
+        return null
+      }
       const inValue = Math.round(row.original.in)
       const usdValue = Math.round(row.original.usdIn)
       return (
-        <MultiLineCell
-          description={`${usdValue ? `$ ${usdValue}` : ''}`}
-          title={inValue ? String(inValue) : ''}
-        />
+        <MultiLineCell description={`$ ${usdValue}`} title={String(inValue)} />
       )
     },
   },
@@ -131,12 +144,47 @@ const COLUMNS: Column<TreasuryTransaction>[] = [
     Footer: 'Out',
     accessor: 'out',
     Cell: ({ row }: Cell<TreasuryTransaction>) => {
+      if (row.original.in > row.original.out) {
+        return null
+      }
       const outValue = Math.round(row.original.out)
       const usdValue = Math.round(row.original.usdOut)
       return (
+        <MultiLineCell description={`$ ${usdValue}`} title={String(outValue)} />
+      )
+    },
+  },
+]
+
+const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
+  {
+    Header: 'Token',
+    Footer: 'Token',
+    // @ts-ignore this is fine
+    accessor: 'token.symbol',
+    Filter: SelectColumnFilter,
+    filter: 'includes',
+    Cell: ({ value, row }: Cell<TokenBalanceLineItem>) => {
+      return (
         <MultiLineCell
-          description={`${usdValue ? `$ ${usdValue}` : ''}`}
-          title={outValue ? String(outValue) : ''}
+          description={row.original.token.tokenAddress}
+          title={value}
+        />
+      )
+    },
+  },
+
+  {
+    Header: 'Balance',
+    Footer: 'Balance',
+    accessor: 'tokenBalance',
+    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
+      const tokenValue = Math.round(row.original.tokenValue)
+      const usdValue = Math.round(row.original.usdValue)
+      return (
+        <MultiLineCell
+          description={`$ ${usdValue}`}
+          title={String(tokenValue)}
         />
       )
     },

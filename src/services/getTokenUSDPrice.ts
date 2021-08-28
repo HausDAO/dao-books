@@ -18,7 +18,6 @@ export const getTokenUSDPrice = async (
     `https://daohaus-metadata.s3.amazonaws.com/daoTokenPrices.json`
   )
 
-  const { price } = tokens[tokenAddress]
-
+  const { price = 0 } = tokens[tokenAddress] || {}
   return price
 }

@@ -355,7 +355,6 @@ export default function Table<T extends Record<string, unknown>>({
               >
                 <div className="block">
                   <p className="text-sm text-gray-700">
-                    Displaying{' '}
                     <span className="font-medium">{rows.length}</span> Results
                   </p>
                 </div>
