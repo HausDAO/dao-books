@@ -4,12 +4,13 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { Cell, Column } from 'react-table'
 import { getServerSideProps } from '../../pages/dao/[id]/treasury'
-import { formatDate } from '../../utils/methods'
+import { formatDate, formatNumber } from '../../utils/methods'
 import dynamic from 'next/dynamic'
 
 import { MultiLineCell, SelectColumnFilter } from '../table'
 import moment from 'moment'
 import { TokenBalance } from '../../types/DAO'
+import { BalanceCard } from '../BalanceCard'
 // Making this client side because chart.js cannot render on server side
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
@@ -18,6 +19,7 @@ export const Treasury = ({
   daoMetadata,
   treasuryTransactions,
   tokenBalances,
+  combinedFlows,
   error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
@@ -52,6 +54,11 @@ export const Treasury = ({
         <h1 className="font-semibold text-3xl inline mr-3">
           {daoMetadata.name} - DAO Treasury
         </h1>
+      </div>
+      <div className="space-x-2">
+        <BalanceCard title="Inflow" balance={combinedFlows?.inflow} />
+        <BalanceCard title="Outflow" balance={combinedFlows?.outflow} />
+        <BalanceCard title="Closing" balance={combinedFlows?.closing} />
       </div>
 
       <h2 className="text-2xl">Transactions</h2>
@@ -90,8 +97,18 @@ export type TreasuryTransaction = {
 }
 
 export type TokenBalanceLineItem = TokenBalance & {
-  tokenValue: number
-  usdValue: number
+  inflow: {
+    tokenValue: number
+    usdValue: number
+  }
+  outflow: {
+    tokenValue: number
+    usdValue: number
+  }
+  closing: {
+    tokenValue: number
+    usdValue: number
+  }
 }
 
 const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
@@ -132,8 +149,8 @@ const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
       if (row.original.out > row.original.in) {
         return null
       }
-      const inValue = Math.round(row.original.in)
-      const usdValue = Math.round(row.original.usdIn)
+      const inValue = formatNumber(row.original.in)
+      const usdValue = formatNumber(row.original.usdIn)
       return (
         <MultiLineCell description={`$ ${usdValue}`} title={String(inValue)} />
       )
@@ -147,8 +164,8 @@ const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
       if (row.original.in > row.original.out) {
         return null
       }
-      const outValue = Math.round(row.original.out)
-      const usdValue = Math.round(row.original.usdOut)
+      const outValue = formatNumber(row.original.out)
+      const usdValue = formatNumber(row.original.usdOut)
       return (
         <MultiLineCell description={`$ ${usdValue}`} title={String(outValue)} />
       )
@@ -173,14 +190,47 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
       )
     },
   },
+  {
+    Header: 'Inflow',
+    Footer: 'Inflow',
+    // @ts-ignore this is fine
+    accessor: 'inflow.tokenValue',
+    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
+      const tokenValue = formatNumber(row.original.inflow.tokenValue)
+      const usdValue = formatNumber(row.original.inflow.usdValue)
+      return (
+        <MultiLineCell
+          description={`$ ${usdValue}`}
+          title={String(tokenValue)}
+        />
+      )
+    },
+  },
+  {
+    Header: 'Outflow',
+    Footer: 'Outflow',
+    // @ts-ignore this is fine
+    accessor: 'outflow.tokenValue',
+    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
+      const tokenValue = formatNumber(row.original.outflow.tokenValue)
+      const usdValue = formatNumber(row.original.outflow.usdValue)
+      return (
+        <MultiLineCell
+          description={`$ ${usdValue}`}
+          title={String(tokenValue)}
+        />
+      )
+    },
+  },
 
   {
     Header: 'Balance',
     Footer: 'Balance',
-    accessor: 'tokenBalance',
+    // @ts-ignore this is fine
+    accessor: 'closing.tokenValue',
     Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      const tokenValue = Math.round(row.original.tokenValue)
-      const usdValue = Math.round(row.original.usdValue)
+      const tokenValue = formatNumber(row.original.closing.tokenValue)
+      const usdValue = formatNumber(row.original.closing.usdValue)
       return (
         <MultiLineCell
           description={`$ ${usdValue}`}

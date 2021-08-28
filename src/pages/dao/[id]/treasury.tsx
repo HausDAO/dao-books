@@ -9,7 +9,10 @@ import { getDAOMetadata } from '../../../services/getDAOMetadata'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
-import { convertTokenValueToUSD } from '../../../utils/methods'
+import {
+  convertTokenToValue,
+  convertTokenValueToUSD,
+} from '../../../utils/methods'
 
 export default Treasury
 
@@ -60,6 +63,16 @@ type MolochData = {
 type MolochStatsBalancesData = {
   balances: MolochStatsBalance[]
 }
+
+type CalculatedTokenBalances = {
+  [tokenAddress: string]: {
+    in: number
+    out: number
+    usdIn: number
+    usdOut: number
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
@@ -83,6 +96,49 @@ export const getServerSideProps = async (
       }
     )
 
+    // used to store all the inflow and outflow of each token when iterating over the list of moloch stats
+    const calculatedTokenBalances: CalculatedTokenBalances = {}
+
+    const initTokenBalance = (tokenAddress: string) => {
+      if (!(tokenAddress in calculatedTokenBalances)) {
+        calculatedTokenBalances[tokenAddress] = {
+          out: 0,
+          usdOut: 0,
+          in: 0,
+          usdIn: 0,
+        }
+      }
+    }
+    const incrementInflow = (
+      tokenAddress: string,
+      inValue: number,
+      usdValue: number
+    ) => {
+      initTokenBalance(tokenAddress)
+
+      const tokenStats = calculatedTokenBalances[tokenAddress]
+      calculatedTokenBalances[tokenAddress] = {
+        ...tokenStats,
+        in: tokenStats.in + inValue,
+        usdIn: tokenStats.usdIn + usdValue,
+      }
+    }
+
+    const incrementOutflow = (
+      tokenAddress: string,
+      outValue: number,
+      usdValue: number
+    ) => {
+      initTokenBalance(tokenAddress)
+
+      const tokenStats = calculatedTokenBalances[tokenAddress]
+      calculatedTokenBalances[tokenAddress] = {
+        ...tokenStats,
+        out: tokenStats.out + outValue,
+        usdOut: tokenStats.usdOut + usdValue,
+      }
+    }
+
     const mapMolochStatsToTreasuryTransaction = async (
       molochStatsBalances: MolochStatsBalance[]
     ): Promise<TreasuryTransaction[]> => {
@@ -97,9 +153,10 @@ export const getServerSideProps = async (
             tokenBalance: molochStatBalance.amount,
           })
 
-          const tokenValue =
-            Number(molochStatBalance.amount) /
-            Math.pow(10, Number(molochStatBalance.tokenDecimals))
+          const tokenValue = convertTokenToValue(
+            molochStatBalance.amount,
+            molochStatBalance.tokenDecimals
+          )
 
           const balances = (() => {
             if (
@@ -117,6 +174,11 @@ export const getServerSideProps = async (
               molochStatBalance.payment === false &&
               molochStatBalance.tribute === true
             ) {
+              incrementInflow(
+                molochStatBalance.tokenAddress,
+                tokenValue,
+                usdValue
+              )
               return {
                 in: tokenValue,
                 usdIn: usdValue,
@@ -129,6 +191,11 @@ export const getServerSideProps = async (
               molochStatBalance.payment === true &&
               molochStatBalance.tribute === false
             ) {
+              incrementOutflow(
+                molochStatBalance.tokenAddress,
+                tokenValue,
+                usdValue
+              )
               return {
                 in: 0,
                 usdIn: 0,
@@ -159,20 +226,40 @@ export const getServerSideProps = async (
     }
 
     const mapMolochTokenBalancesToTokenBalanceLineItem = async (
-      molochTokenBalances: TokenBalance[]
+      molochTokenBalances: TokenBalance[],
+      calculatedTokenBalances: CalculatedTokenBalances
     ): Promise<TokenBalanceLineItem[]> => {
       const tokenBalanceLineItems = await Promise.all(
         molochTokenBalances.map(async (molochTokenBalance) => {
           const usdValue = await convertTokenValueToUSD(molochTokenBalance)
 
-          const tokenValue =
-            Number(molochTokenBalance.tokenBalance) /
-            Math.pow(10, Number(molochTokenBalance.token.decimals))
+          const tokenValue = convertTokenToValue(
+            molochTokenBalance.tokenBalance,
+            molochTokenBalance.token.decimals
+          )
 
           return {
             ...molochTokenBalance,
-            tokenValue,
-            usdValue,
+            inflow: {
+              tokenValue:
+                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+                  ?.in || 0,
+              usdValue:
+                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+                  ?.usdIn || 0,
+            },
+            outflow: {
+              tokenValue:
+                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+                  ?.out || 0,
+              usdValue:
+                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
+                  ?.usdOut || 0,
+            },
+            closing: {
+              tokenValue,
+              usdValue,
+            },
           }
         })
       )
@@ -184,8 +271,17 @@ export const getServerSideProps = async (
     )
 
     const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
-      moloch.data.moloch.tokenBalances
+      moloch.data.moloch.tokenBalances,
+      calculatedTokenBalances
     )
+
+    const combinedFlows = { inflow: 0, outflow: 0, closing: 0 }
+
+    tokenBalances.forEach((tokenBalance) => {
+      combinedFlows.inflow += tokenBalance.inflow.usdValue
+      combinedFlows.outflow += tokenBalance.outflow.usdValue
+      combinedFlows.closing += tokenBalance.closing.usdValue
+    })
 
     return {
       props: {
@@ -196,6 +292,7 @@ export const getServerSideProps = async (
           ['usdValue', 'tokenValue'],
           ['desc', 'desc']
         ),
+        combinedFlows,
       },
     }
   } catch (error) {
