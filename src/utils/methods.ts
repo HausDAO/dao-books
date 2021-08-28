@@ -42,9 +42,23 @@ export const convertTokenValueToUSD = async (
 ): Promise<number> => {
   const usdPrice = await getTokenUSDPrice(tokenBalance.token.tokenAddress)
   return (
-    (usdPrice * Number(tokenBalance.tokenBalance)) /
-    Math.pow(10, Number(tokenBalance.token.decimals))
+    usdPrice *
+    convertTokenToValue(tokenBalance.tokenBalance, tokenBalance.token.decimals)
   )
+}
+
+export const formatNumber = (number?: number): string | undefined => {
+  return number?.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  })
+}
+
+export const convertTokenToValue = (
+  tokenAmount: number | string,
+  decimals: string
+): number => {
+  return Number(tokenAmount) / Math.pow(10, Number(decimals))
 }
 
 export const getTokenImage = (token: Token): string => {

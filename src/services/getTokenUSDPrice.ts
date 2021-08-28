@@ -1,5 +1,5 @@
 import fetchJson from '../utils/fetchJson'
-
+import cache from 'memory-cache'
 export type CachedMinion = {
   address: string
   name: string
@@ -11,14 +11,29 @@ export type CachedMinion = {
   }[]
 }
 
+const getTokenPrices = async () => {
+  let tokenPrices: {
+    [tokenAddress: string]: {
+      price: number
+    }
+  }
+
+  if (cache.get('tokenPrices')) {
+    tokenPrices = cache.get('tokenPrices')
+  } else {
+    tokenPrices = await fetchJson<{
+      [tokenAddress: string]: { price: number }
+    }>(`https://daohaus-metadata.s3.amazonaws.com/daoTokenPrices.json`)
+    cache.put('tokenPrices', tokenPrices, 1000 * 60 * 60)
+  }
+
+  return tokenPrices
+}
+
 export const getTokenUSDPrice = async (
   tokenAddress: string
 ): Promise<number> => {
-  const tokens = await fetchJson<{ [tokenAddress: string]: { price: number } }>(
-    `https://daohaus-metadata.s3.amazonaws.com/daoTokenPrices.json`
-  )
-
-  const { price } = tokens[tokenAddress]
-
+  const tokens = await getTokenPrices()
+  const { price = 0 } = tokens[tokenAddress] || {}
   return price
 }

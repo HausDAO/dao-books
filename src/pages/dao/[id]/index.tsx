@@ -7,7 +7,7 @@ import fetchGraph from '@/utils/fetchGraph'
 
 export default Vaults
 
-const QUERY = `
+const GET_MOLOCH = `
 query moloch($contractAddr: String!) {
   moloch(id: $contractAddr) {
     id
@@ -40,7 +40,7 @@ export const getServerSideProps = async (
 
     const moloch = await fetchGraph<MolochData, { contractAddr: string }>(
       daoMeta.network,
-      QUERY,
+      GET_MOLOCH,
       {
         contractAddr: daoMeta.contractAddress,
       }
