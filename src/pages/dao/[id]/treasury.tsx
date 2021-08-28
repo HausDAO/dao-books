@@ -289,7 +289,7 @@ export const getServerSideProps = async (
         treasuryTransactions,
         tokenBalances: orderBy(
           tokenBalances,
-          ['usdValue', 'tokenValue'],
+          ['closing.usdValue', 'closing.tokenValue'],
           ['desc', 'desc']
         ),
         combinedFlows,
