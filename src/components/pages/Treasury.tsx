@@ -1,16 +1,18 @@
 import { Button } from '@chakra-ui/react'
+import moment from 'moment'
 import { InferGetServerSidePropsType } from 'next'
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Cell, Column } from 'react-table'
 import { getServerSideProps } from '../../pages/dao/[id]/treasury'
-import { formatDate, formatNumber } from '../../utils/methods'
-import dynamic from 'next/dynamic'
-
-import { MultiLineCell, SelectColumnFilter } from '../table'
-import moment from 'moment'
 import { TokenBalance } from '../../types/DAO'
+import { formatNumber } from '../../utils/methods'
 import { BalanceCard } from '../BalanceCard'
+import { MultiLineCell, SelectColumnFilter } from '../table'
+
 // Making this client side because chart.js cannot render on server side
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
@@ -86,6 +88,7 @@ export const Treasury = ({
 
 export type TreasuryTransaction = {
   date: string | Date
+  txExplorerLink: string
   type: string
   tokenSymbol: string
   tokenDecimals: string
@@ -97,6 +100,7 @@ export type TreasuryTransaction = {
 }
 
 export type TokenBalanceLineItem = TokenBalance & {
+  tokenExplorerLink: string
   inflow: {
     tokenValue: number
     usdValue: number
@@ -116,13 +120,23 @@ const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
     Header: 'Date',
     Footer: 'Date',
     accessor: 'date',
-    Cell: ({ value }: Cell<TreasuryTransaction>): JSX.Element => {
-      const date = moment.unix(value)
+    Cell: ({ value, row }: Cell<TreasuryTransaction>): JSX.Element => {
+      const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
+      const txExplorerLink = row.original.txExplorerLink
       return (
-        <MultiLineCell
-          title={formatDate(date)}
-          description={date.format('HH:mm')}
-        />
+        <div className="flex flex-col space-y-2">
+          <div className="text-gray-900">{date}</div>
+          <Link href={txExplorerLink}>
+            <a
+              className="text-xs text-brand-500 flex items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Tx
+              <HiOutlineExternalLink className="inline ml-1" />
+            </a>
+          </Link>
+        </div>
       )
     },
   },
@@ -182,11 +196,21 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     Filter: SelectColumnFilter,
     filter: 'includes',
     Cell: ({ value, row }: Cell<TokenBalanceLineItem>) => {
+      const tokenExplorerLink = row.original.tokenExplorerLink
       return (
-        <MultiLineCell
-          description={row.original.token.tokenAddress}
-          title={value}
-        />
+        <div className="flex flex-col space-y-2">
+          <div className="text-gray-900">{value}</div>
+          <Link href={tokenExplorerLink}>
+            <a
+              className="text-xs text-brand-500 flex items-center"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Contract
+              <HiOutlineExternalLink className="inline ml-1" />
+            </a>
+          </Link>
+        </div>
       )
     },
   },

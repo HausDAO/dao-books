@@ -109,6 +109,11 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
+"@badrap/bar-of-progress@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@badrap/bar-of-progress/-/bar-of-progress-0.1.2.tgz#5d9cf85759e1f77bddcb74398530976d87bb5077"
+  integrity sha512-bCwx/HbgUfJEndzlubJF5FVQrFEcGX4HZsoCfoa+gSq37pjbJBvIyqMBLIGnb5y0ICovIrxJUxvlbmxeic0rSQ==
+
 "@chakra-ui/accordion@1.3.5":
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-1.3.5.tgz#b150e47ed57d2a3aaf78c86af6dd62bc10dbe4c3"
