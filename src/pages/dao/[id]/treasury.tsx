@@ -7,6 +7,7 @@ import {
 } from '../../../components/pages'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
+import { getTokenExplorer } from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
 import {
@@ -40,7 +41,7 @@ query moloch($molochAddress: String!) {
   balances(
     where: {molochAddress: $molochAddress, action_not: "summon"}
     orderBy: timestamp
-    orderDirection: asc
+    orderDirection: desc
   ) {
     id
     timestamp
@@ -212,12 +213,21 @@ export const getServerSideProps = async (
             }
           })()
 
+          // const txExplorerLink = getTxExplorer(
+          //   daoMeta.network,
+          //   molochStatBalance.id
+          // )
+
+          // TODO: To be implemented later
+          const txExplorerLink = '#'
+
           return {
             date: molochStatBalance.timestamp,
             type: startCase(molochStatBalance.action),
             tokenSymbol: molochStatBalance.tokenSymbol,
             tokenDecimals: molochStatBalance.tokenDecimals,
             tokenAddress: molochStatBalance.tokenAddress,
+            txExplorerLink,
             ...balances,
           }
         })
@@ -238,8 +248,14 @@ export const getServerSideProps = async (
             molochTokenBalance.token.decimals
           )
 
+          const tokenExplorerLink = getTokenExplorer(
+            daoMeta.network,
+            molochTokenBalance.token.tokenAddress
+          )
+
           return {
             ...molochTokenBalance,
+            tokenExplorerLink,
             inflow: {
               tokenValue:
                 calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
