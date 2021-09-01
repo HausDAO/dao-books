@@ -6,6 +6,7 @@ import {
   TreasuryTransaction,
 } from '../../../components/pages'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
+import { cacheTokenPrices } from '../../../services/getTokenUSDPrice'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
 import { getTokenExplorer } from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
@@ -36,9 +37,11 @@ query moloch($contractAddr: String!) {
 }
 `
 
+// TODO: implement pagination server side
 const BALANCES = `
-query moloch($molochAddress: String!) {
+query MolochBalances($molochAddress: String!) {
   balances(
+    first: 1000,
     where: {molochAddress: $molochAddress, action_not: "summon"}
     orderBy: timestamp
     orderDirection: desc
@@ -79,6 +82,9 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const { id: daoAddress } = context.query
+
+  // FIXME: A hack to cache token prices before we fetch prices for all tokens in parallel
+  await cacheTokenPrices()
 
   try {
     const daoMeta = await getDAOMetadata(daoAddress as string)
