@@ -37,3 +37,7 @@ export const getTokenUSDPrice = async (
   const { price = 0 } = tokens[tokenAddress] || {}
   return price
 }
+
+export const cacheTokenPrices = async () => {
+  await getTokenPrices
+}
