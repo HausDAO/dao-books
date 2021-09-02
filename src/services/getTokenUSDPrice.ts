@@ -1,15 +1,5 @@
 import fetchJson from '../utils/fetchJson'
 import cache from 'memory-cache'
-export type CachedMinion = {
-  address: string
-  name: string
-  erc20s: {
-    tokenBalance: string
-    tokenAddress: string
-    decimals: string
-    symbol: string
-  }[]
-}
 
 const getTokenPrices = async () => {
   let tokenPrices: {
@@ -23,8 +13,8 @@ const getTokenPrices = async () => {
   } else {
     tokenPrices = await fetchJson<{
       [tokenAddress: string]: { price: number }
-    }>(`https://daohaus-metadata.s3.amazonaws.com/daoTokenPrices.json`)
-    cache.put('tokenPrices', tokenPrices, 1000 * 60 * 60)
+    }>(`https://data.daohaus.club/dao-tokens`)
+    cache.put('tokenPrices', tokenPrices, 1000 * 60 * 5)
   }
 
   return tokenPrices
@@ -38,6 +28,7 @@ export const getTokenUSDPrice = async (
   return price
 }
 
-export const cacheTokenPrices = async () => {
-  await getTokenPrices
+export const cacheTokenPrices = async (): Promise<void> => {
+  await getTokenPrices()
+  return
 }

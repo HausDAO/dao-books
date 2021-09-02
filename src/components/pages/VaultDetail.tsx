@@ -17,12 +17,13 @@ import { MultiLineCell, SelectColumnFilter } from '../table'
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
 })
-export const Treasury = ({
+export const VaultDetail = ({
   daoMetadata,
-  treasuryTransactions,
+  transactions,
   tokenBalances,
   combinedFlows,
   error,
+  vaultName,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
@@ -54,7 +55,7 @@ export const Treasury = ({
     <div className="p-4 space-y-3">
       <div>
         <h1 className="font-semibold text-3xl inline mr-3">
-          {daoMetadata.name} - DAO Treasury
+          {daoMetadata.name} - {vaultName}
         </h1>
       </div>
       <div className="space-x-2">
@@ -67,7 +68,7 @@ export const Treasury = ({
       <Table
         // @ts-ignore - dont know why it doesnt work when using with dynamic import
         columns={transactionsColumns}
-        data={treasuryTransactions || []}
+        data={transactions || []}
         initialState={{
           pageSize: 20,
         }}
@@ -86,7 +87,7 @@ export const Treasury = ({
   )
 }
 
-export type TreasuryTransaction = {
+export type VaultTransaction = {
   date: string | Date
   txExplorerLink: string
   type: string
@@ -115,12 +116,12 @@ export type TokenBalanceLineItem = TokenBalance & {
   }
 }
 
-const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
+const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
   {
     Header: 'Date',
     Footer: 'Date',
     accessor: 'date',
-    Cell: ({ value, row }: Cell<TreasuryTransaction>): JSX.Element => {
+    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
       const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
       const txExplorerLink = row.original.txExplorerLink
       return (
@@ -159,7 +160,7 @@ const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
     Header: 'In',
     Footer: 'In',
     accessor: 'in',
-    Cell: ({ row }: Cell<TreasuryTransaction>) => {
+    Cell: ({ row }: Cell<VaultTransaction>) => {
       if (row.original.out > row.original.in) {
         return null
       }
@@ -174,7 +175,7 @@ const TRANSACTIONS_COLUMNS: Column<TreasuryTransaction>[] = [
     Header: 'Out',
     Footer: 'Out',
     accessor: 'out',
-    Cell: ({ row }: Cell<TreasuryTransaction>) => {
+    Cell: ({ row }: Cell<VaultTransaction>) => {
       if (row.original.in > row.original.out) {
         return null
       }

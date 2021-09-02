@@ -46,10 +46,7 @@ export const getServerSideProps = async (
       }
     )
 
-    const minions = await getMinions(
-      moloch.data.moloch.minions.map((m) => m.minionAddress),
-      daoMeta.network
-    )
+    const minions = await getMinions(daoMeta.contractAddress)
 
     return {
       props: {
