@@ -1,31 +1,12 @@
-import { MinionWithTokenBalances } from '../types/DAO'
+import { CachedMinion, MinionWithTokenBalances } from '../types/DAO'
 import { DAO_HAUS_API_URL } from '../utils/constants'
 import fetchJson from '../utils/fetchJson'
 
-export type CachedMinion = {
-  address: string
-  name: string
-  erc20s: {
-    tokenBalance: string
-    tokenAddress: string
-    decimals: string
-    symbol: string
-  }[]
-}
-
 export const getMinions = async (
-  minionAddresses: string[],
-  network: string
+  daoAddress: string
 ): Promise<MinionWithTokenBalances[]> => {
   const cachedMinions = await fetchJson<CachedMinion[]>(
-    `${DAO_HAUS_API_URL}/vaults`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        minions: minionAddresses,
-        network,
-      }),
-    }
+    `${DAO_HAUS_API_URL}/vaults/${daoAddress}`
   )
 
   const formatCachedMinionToMinionWithTokenBalances = (
@@ -44,6 +25,7 @@ export const getMinions = async (
             symbol: erc20.symbol,
           },
         })),
+        transactions: cachedMinion.balanceHistory,
       }
     })
   }

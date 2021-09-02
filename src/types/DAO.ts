@@ -14,8 +14,18 @@ export type Minion = {
   name: string
 }
 
+export type MinionTransaction = {
+  value: string
+  tokenDecimals: string
+  tokenAddress: string
+  tokenSymbol: string
+  timestamp: string
+  deposit: boolean
+}
+
 export type MinionWithTokenBalances = Minion & {
   tokenBalances: TokenBalance[]
+  transactions: MinionTransaction[]
 }
 
 export type Moloch = {
@@ -37,4 +47,16 @@ export type MolochStatsBalance = {
   currentShares: number
   currentLoot: number
   action: string
+}
+
+export type CachedMinion = {
+  address: string
+  name: string
+  erc20s: {
+    tokenBalance: string
+    tokenAddress: string
+    decimals: string
+    symbol: string
+  }[]
+  balanceHistory: MinionTransaction[]
 }
