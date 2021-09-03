@@ -7,7 +7,7 @@ type VaultCardProps = {
 
 export const BalanceCard: FC<VaultCardProps> = ({ title, balance }) => {
   return (
-    <div className="inline-flex rounded-md shadow flex-col p-4 bg-gray-200">
+    <div className="inline-flex rounded-md shadow border-2 border-primary-300 flex-col p-4 w-80 space-y-2">
       <div className="text-xl text-gray-800">{title}</div>
       <div className="text-sm text-gray-700">
         $ {formatNumber(balance) || 0}
