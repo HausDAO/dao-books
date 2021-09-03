@@ -43,8 +43,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <div className="flex flex-col bg-primary-500 text-white h-screen">
-          <div className="bg-primary-700 w-full">
+        <div className="flex flex-col h-full bg-primary-500 text-white">
+          <div className="bg-primary-700 w-full z-10 fixed">
             <div className="p-4">
               <Link href="/">
                 <a>
@@ -58,8 +58,8 @@ function MyApp({ Component, pageProps }: AppProps) {
               </Link>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col xl:max-w-7xl lg:max-w-5xl md:max-w-4xl m-auto">
+          <div className="min-h-screen flex-1 overflow-y-auto">
+            <div className="mt-20 flex flex-col xl:max-w-7xl lg:max-w-5xl md:max-w-4xl m-auto">
               <Component {...pageProps} />
             </div>
           </div>

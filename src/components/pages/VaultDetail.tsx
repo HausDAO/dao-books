@@ -12,6 +12,7 @@ import { BalanceCard } from '../BalanceCard'
 import { MultiLineCell, SelectColumnFilter } from '../table'
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
+import { DateRangeFilter, filterByDate } from '../table/DateRangeFilter'
 // Making this client side because chart.js cannot render on server side
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
@@ -48,7 +49,7 @@ export const VaultDetail = ({
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-2xl">Transactions</h2>
+        <H2>Transactions</H2>
         <Table
           // @ts-ignore - dont know why it doesnt work when using with dynamic import
           columns={transactionsColumns}
@@ -59,7 +60,7 @@ export const VaultDetail = ({
         />
       </div>
       <div className="space-y-2">
-        <h2 className="text-2xl">Token Balances</h2>
+        <H2>Token Balances</H2>
         <Table
           // @ts-ignore - dont know why it doesnt work when using with dynamic import
           columns={tokenBalancesColumns}
@@ -107,6 +108,8 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
     Header: 'Date',
     Footer: 'Date',
     accessor: 'date',
+    Filter: DateRangeFilter,
+    filter: filterByDate,
     Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
       const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
       const txExplorerLink = row.original.txExplorerLink
