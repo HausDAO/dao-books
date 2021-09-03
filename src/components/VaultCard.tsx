@@ -32,10 +32,14 @@ export const VaultCard: FC<VaultCardProps> = ({
   })
 
   return (
-    <div className="inline-flex rounded-md shadow flex-col p-2 bg-gray-200">
-      <div>{name}</div>
-      <div>$ {formatNumber(balance) || 0}</div>
-      {`Vault Book ->`}
+    <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 lg:w-80 md:w-56 w-48 space-y-2">
+      <div>
+        <div className="text-lg">{name}</div>
+        <div className="text-sm">$ {formatNumber(balance) || 0}</div>
+      </div>
+      <p className="text-secondary-500 text-sm hover:underline">
+        Vault Book &rarr;
+      </p>
     </div>
   )
 }

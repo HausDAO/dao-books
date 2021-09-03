@@ -1,9 +1,7 @@
-import { Button } from '@chakra-ui/react'
 import moment from 'moment'
 import { InferGetServerSidePropsType } from 'next'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Cell, Column } from 'react-table'
@@ -12,7 +10,8 @@ import { TokenBalance } from '../../types/DAO'
 import { formatNumber } from '../../utils/methods'
 import { BalanceCard } from '../BalanceCard'
 import { MultiLineCell, SelectColumnFilter } from '../table'
-
+import { Error } from '@/components/Error'
+import { H1, H2 } from '@/components/atoms'
 // Making this client side because chart.js cannot render on server side
 const Table = dynamic(() => import('@/components/table/Table'), {
   ssr: false,
@@ -22,67 +21,54 @@ export const VaultDetail = ({
   transactions,
   tokenBalances,
   combinedFlows,
-  error,
   vaultName,
+  error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
-  const router = useRouter()
-
-  const handleGoToHome = () => {
-    router.replace('/')
-  }
-
   if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
-        <p className="text-xl">{error.message}</p>
-        <Button onClick={handleGoToHome}>Go to Home</Button>
-      </div>
-    )
+    return <Error />
   }
 
   if (!daoMetadata) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
-        <p className="text-xl">Something went wrong</p>
-        <Button onClick={handleGoToHome}>Go to Home</Button>
-      </div>
-    )
+    return <Error />
   }
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="p-4 space-y-8">
       <div>
-        <h1 className="font-semibold text-3xl inline mr-3">
+        <H1>
           {daoMetadata.name} - {vaultName}
-        </h1>
+        </H1>
       </div>
-      <div className="space-x-2">
+      <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
         <BalanceCard title="Inflow" balance={combinedFlows?.inflow} />
         <BalanceCard title="Outflow" balance={combinedFlows?.outflow} />
         <BalanceCard title="Closing" balance={combinedFlows?.closing} />
       </div>
 
-      <h2 className="text-2xl">Transactions</h2>
-      <Table
-        // @ts-ignore - dont know why it doesnt work when using with dynamic import
-        columns={transactionsColumns}
-        data={transactions || []}
-        initialState={{
-          pageSize: 20,
-        }}
-      />
-
-      <h2 className="text-2xl">Token Balances</h2>
-      <Table
-        // @ts-ignore - dont know why it doesnt work when using with dynamic import
-        columns={tokenBalancesColumns}
-        data={tokenBalances || []}
-        initialState={{
-          pageSize: 20,
-        }}
-      />
+      <div className="space-y-2">
+        <h2 className="text-2xl">Transactions</h2>
+        <Table
+          // @ts-ignore - dont know why it doesnt work when using with dynamic import
+          columns={transactionsColumns}
+          data={transactions || []}
+          initialState={{
+            pageSize: 20,
+          }}
+        />
+      </div>
+      <div className="space-y-2">
+        <h2 className="text-2xl">Token Balances</h2>
+        <Table
+          // @ts-ignore - dont know why it doesnt work when using with dynamic import
+          columns={tokenBalancesColumns}
+          data={tokenBalances || []}
+          initialState={{
+            pageSize: 20,
+          }}
+        />
+      </div>
     </div>
   )
 }
@@ -125,11 +111,11 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
       const txExplorerLink = row.original.txExplorerLink
       return (
-        <div className="flex flex-col space-y-2">
-          <div className="text-gray-900">{date}</div>
+        <div className="flex rounded-md shadow flex-col p-4 w-80 space-y-2">
+          <div>{date}</div>
           <Link href={txExplorerLink}>
             <a
-              className="text-xs text-brand-500 flex items-center"
+              className="text-xs hover:underline flex items-center"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -199,11 +185,11 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     Cell: ({ value, row }: Cell<TokenBalanceLineItem>) => {
       const tokenExplorerLink = row.original.tokenExplorerLink
       return (
-        <div className="flex flex-col space-y-2">
-          <div className="text-gray-900">{value}</div>
+        <div className="flex flex-col space-y-2 p-4">
+          <div>{value}</div>
           <Link href={tokenExplorerLink}>
             <a
-              className="text-xs text-brand-500 flex items-center"
+              className="text-xs hover:underline flex items-center"
               target="_blank"
               rel="noopener noreferrer"
             >

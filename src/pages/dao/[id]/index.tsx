@@ -58,7 +58,9 @@ export const getServerSideProps = async (
   } catch (error) {
     return {
       props: {
-        error,
+        error: {
+          message: (error as Error).message,
+        },
       },
     }
   }

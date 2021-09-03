@@ -786,6 +786,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.0.tgz#b99e49fa178e4086250fb3df2ed6a7366c9a0cb5"
   integrity sha512-2efK8Ru0LkuOYrEpiHPlV02YkTdIKGbezlxVNeA8/3c+tNt7P2aQPuiYYkVy7N4GA5LWSUVcLL/91MpCIjinOw==
 
+"@fontsource/mulish@^4.5.1":
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/@fontsource/mulish/-/mulish-4.5.1.tgz#75be2efb8d20e602d4b8b416422ca782bff48c09"
+  integrity sha512-0CcAyvf1y0E74jAWLRjBEMw5ud3AKJFTfrFFsJn4E1OJZ3eLzKmb7MKM3GilhFvqTA00uz/22ZPxp1Z1J3f9sw==
+
 "@graphql-typed-document-node/core@^3.0.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
