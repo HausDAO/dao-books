@@ -115,7 +115,7 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
       const txExplorerLink = row.original.txExplorerLink
       return (
-        <div className="flex flex-col space-y-2">
+        <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 w-80 space-y-2">
           <div className="text-gray-900">{date}</div>
           <Link href={txExplorerLink}>
             <a

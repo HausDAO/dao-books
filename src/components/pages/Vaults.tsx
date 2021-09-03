@@ -18,7 +18,7 @@ export const Vaults = ({
 
   if (!moloch || !daoMetadata || !minions) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
+      <div className="flex flex-col justify-center items-center space-y-2">
         <p className="text-xl">Something went wrong</p>
         <Button onClick={handleGoToHome}>Go to Home</Button>
       </div>
@@ -26,7 +26,7 @@ export const Vaults = ({
   }
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="p-4 space-y-3 h-screen">
       <div>
         <h1 className="font-semibold text-3xl inline mr-3">
           {daoMetadata.name}
