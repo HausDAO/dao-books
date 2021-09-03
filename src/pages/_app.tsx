@@ -43,7 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <div className="bg-primary-500 text-white h-screen">
+        <div className="bg-primary-500 text-white">
           <div className="p-4">
             <img
               src="https://daohaus.club/img/logo.png"

@@ -19,7 +19,7 @@ export const Vaults = ({
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
+      <div className="flex flex-col justify-center items-center space-y-2">
         <p className="text-xl">{error.message}</p>
         <Button onClick={handleGoToHome}>Go to Home</Button>
       </div>
@@ -28,7 +28,7 @@ export const Vaults = ({
 
   if (!moloch || !daoMetadata || !minions) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
+      <div className="flex flex-col justify-center items-center space-y-2">
         <p className="text-xl">Something went wrong</p>
         <Button onClick={handleGoToHome}>Go to Home</Button>
       </div>

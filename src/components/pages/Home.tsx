@@ -57,7 +57,7 @@ export const Home: FC = () => {
     router.push(`/dao/${data.address}`)
   }
   return (
-    <div className="h-screen flex flex-col max-w-3xl m-auto">
+    <div className="flex flex-col max-w-3xl m-auto">
       <div className="space-y-2 p-4">
         <h1 className="font-semibold text-3xl lg:pt-10 md:pt-6">
           DAO Bookkeeping
