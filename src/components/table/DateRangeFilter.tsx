@@ -75,7 +75,6 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
       <PopoverTrigger>
         <Input
           {...input.fieldProps}
-          style={{ maxWidth: '300px' }}
           value={filterValue}
           placeholder="Filter by Date Range"
         />
@@ -96,7 +95,7 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
                   )}`
                 )
               } else {
-                setFilter(undefined)
+                setFilter('')
               }
             }}
           />
