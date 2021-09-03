@@ -60,7 +60,7 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
 
   const options: UseInputOptions = {
     // Select today as default
-    defaultSelected: new Date(),
+    defaultSelected: momentUTC(new Date()).subtract('1', 'M').toDate(),
     // Limit the valid dates
     fromDate: new Date(min),
     toDate: new Date(max),
