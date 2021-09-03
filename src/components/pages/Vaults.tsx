@@ -36,7 +36,7 @@ export const Vaults = ({
   }
 
   return (
-    <div className="p-4 space-y-3">
+    <div className="p-4 space-y-3 h-screen">
       <div>
         <h1 className="font-semibold text-3xl inline mr-3">
           {daoMetadata.name}
