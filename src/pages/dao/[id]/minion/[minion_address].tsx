@@ -43,7 +43,7 @@ export const getServerSideProps = async (
       return {
         props: {
           error: {
-            message: (error as Error).message,
+            message: 'Minion not found',
           },
         },
       }
