@@ -9,21 +9,11 @@ export const Vaults = ({
   daoMetadata,
   moloch,
   minions,
-  error,
 }: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
   const router = useRouter()
 
   const handleGoToHome = () => {
     router.replace('/')
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-2">
-        <p className="text-xl">{error.message}</p>
-        <Button onClick={handleGoToHome}>Go to Home</Button>
-      </div>
-    )
   }
 
   if (!moloch || !daoMetadata || !minions) {

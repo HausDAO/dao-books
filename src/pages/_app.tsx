@@ -1,6 +1,6 @@
 import type { AppProps, AppContext } from 'next/app'
 import App from 'next/app'
-
+import Link from 'next/link'
 import '../styles/globals.css'
 
 import '@fontsource/mulish/200.css'
@@ -43,16 +43,22 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <div className="bg-primary-500 text-white h-screen">
-          <div className="p-4">
-            <img
-              src="https://daohaus.club/img/logo.png"
-              alt="daohaus logo"
-              width="134px"
-              height="32px"
-            />
+        <div className="flex flex-col bg-primary-500 text-white h-screen">
+          <div className="bg-primary-700 w-full">
+            <div className="p-4">
+              <Link href="/">
+                <a>
+                  <img
+                    src="https://daohaus.club/img/logo.png"
+                    alt="daohaus logo"
+                    width="134px"
+                    height="32px"
+                  />
+                </a>
+              </Link>
+            </div>
           </div>
-          <div>
+          <div className="flex-1 overflow-y-auto">
             <Component {...pageProps} />
           </div>
         </div>
