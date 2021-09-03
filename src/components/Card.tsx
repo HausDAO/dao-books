@@ -6,9 +6,10 @@ type CardProps = {
 
 export const Card: FC<CardProps> = ({ title, description }) => {
   return (
-    <div className="inline-flex rounded-md shadow flex-col p-4 bg-gray-200 w-52">
-      <div className="text-xl text-gray-800">{title}</div>
-      <div className="text-sm text-gray-700">{description}</div>
+    <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 w-80 space-y-2">
+      <div className="text-xl">{title}</div>
+      <div className="text-sm">{description}</div>
+      <p className="font-bold pt-2 text-secondary-500">Visit the DAO &rarr;</p>
     </div>
   )
 }

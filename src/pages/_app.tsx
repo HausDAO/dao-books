@@ -3,15 +3,14 @@ import App from 'next/app'
 
 import '../styles/globals.css'
 
-import '@fontsource/inter/100.css'
-import '@fontsource/inter/200.css'
-import '@fontsource/inter/300.css'
-import '@fontsource/inter/400.css'
-import '@fontsource/inter/500.css'
-import '@fontsource/inter/600.css'
-import '@fontsource/inter/700.css'
-import '@fontsource/inter/800.css'
-import '@fontsource/inter/900.css'
+import '@fontsource/mulish/200.css'
+import '@fontsource/mulish/300.css'
+import '@fontsource/mulish/400.css'
+import '@fontsource/mulish/500.css'
+import '@fontsource/mulish/600.css'
+import '@fontsource/mulish/700.css'
+import '@fontsource/mulish/800.css'
+import '@fontsource/mulish/900.css'
 
 import fetch from '../utils/fetchJson'
 import { SWRConfig } from 'swr'
@@ -44,7 +43,19 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
+        <div className="bg-primary-500 text-white h-screen">
+          <div className="p-4">
+            <img
+              src="https://daohaus.club/img/logo.png"
+              alt="daohaus logo"
+              width="134px"
+              height="32px"
+            />
+          </div>
+          <div>
+            <Component {...pageProps} />
+          </div>
+        </div>
       </ChakraProvider>
     </SWRConfig>
   )

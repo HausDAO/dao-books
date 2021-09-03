@@ -57,7 +57,7 @@ export const Home: FC = () => {
     router.push(`/dao/${data.address}`)
   }
   return (
-    <div className="h-screen flex flex-col max-w-2xl m-auto">
+    <div className="h-screen flex flex-col max-w-3xl m-auto">
       <div className="space-y-2 p-4">
         <h1 className="font-semibold text-3xl lg:pt-10 md:pt-6">
           DAO Bookkeeping
@@ -77,12 +77,14 @@ export const Home: FC = () => {
             isLoading={isSubmitting}
             disabled={isSubmitting}
             loadingText="Loading"
+            colorScheme="secondary"
+            color="primary.700"
           >
             View Vaults
           </Button>
         </form>
         <h2 className="font-semibold text-2xl pt-6">Popular DAOs</h2>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-x-12 gap-y-6">
           {POPULAR_DAOS.map((dao) => {
             return (
               <Link key={dao.address} href={`/dao/${dao.address}`}>
@@ -95,9 +97,7 @@ export const Home: FC = () => {
         </div>
         <Link href="https://app.daohaus.club/explore">
           <a target="_blank" rel="noopener noreferrer">
-            <p className="text-gray-700 font-bold pt-2">
-              Explore All DAOs &rarr;
-            </p>
+            <p className="font-bold pt-2">Explore All DAOs &rarr;</p>
           </a>
         </Link>
       </div>

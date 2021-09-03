@@ -15,6 +15,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/inter": "^4.5.0",
+    "@fontsource/mulish": "^4.5.1",
     "@headlessui/react": "^1.4.0",
     "framer-motion": "^4",
     "graphql": "^15.5.1",

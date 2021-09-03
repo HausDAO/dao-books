@@ -95,7 +95,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
       {({ open }) => (
         <>
           <div>
-            <Menu.Button className="inline-flex justify-center py-2 px-4 w-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-md border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-gray-100 shadow-sm focus:outline-none">
+            <Menu.Button className="inline-flex justify-center py-2 px-4 w-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-100 shadow-sm focus:outline-none">
               <HiDownload className="mr-2 w-5 h-5" aria-hidden="true" /> Export
             </Menu.Button>
           </div>
@@ -363,7 +363,7 @@ export default function Table<T extends Record<string, unknown>>({
                     <label>
                       <span className="sr-only">Items Per Page</span>
                       <Select
-                        className="block w-full rounded-md border-gray-300 focus:border-brand-300 focus:ring focus:ring-brand-200 focus:ring-opacity-50"
+                        className="block w-full rounded-md border-gray-300 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
                         value={state.pageSize}
                         onChange={(e) => {
                           setPageSize(Number(e.target.value))

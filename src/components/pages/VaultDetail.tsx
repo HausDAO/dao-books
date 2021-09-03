@@ -129,7 +129,7 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
           <div className="text-gray-900">{date}</div>
           <Link href={txExplorerLink}>
             <a
-              className="text-xs text-brand-500 flex items-center"
+              className="text-xs text-primary-500 flex items-center"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -203,7 +203,7 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
           <div className="text-gray-900">{value}</div>
           <Link href={tokenExplorerLink}>
             <a
-              className="text-xs text-brand-500 flex items-center"
+              className="text-xs text-primary-500 flex items-center"
               target="_blank"
               rel="noopener noreferrer"
             >
