@@ -1,6 +1,5 @@
 import { classNames } from '@/utils/methods'
 import {
-  Button,
   IconButton,
   Input,
   InputGroup,
@@ -34,6 +33,7 @@ import {
 } from 'react-table'
 // @ts-ignore
 import { useExportData } from 'react-table-plugins'
+import { Button } from '@/components/atoms'
 
 // @ts-ignore
 function getExportFileBlob({ columns, data, fileType, fileName }) {
@@ -70,7 +70,7 @@ function GlobalFilter<T extends Record<string, unknown>>({
         <InputLeftElement
           pointerEvents="none"
           // eslint-disable-next-line react/no-children-prop
-          children={<HiSearch className="text-gray-400" />}
+          children={<HiSearch className="" />}
         />
         <Input
           type="search"
@@ -95,7 +95,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
       {({ open }) => (
         <>
           <div>
-            <Menu.Button className="inline-flex justify-center py-2 px-4 w-full text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 rounded-md border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-100 shadow-sm focus:outline-none">
+            <Menu.Button className="inline-flex justify-center py-2 px-4 w-full text-sm font-medium  bg-secondary-500 hover:bg-secondary-600 rounded-md border border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 focus:ring-offset-secondary-200 text-primary-700 shadow-sm focus:outline-none">
               <HiDownload className="mr-2 w-5 h-5" aria-hidden="true" /> Export
             </Menu.Button>
           </div>
@@ -112,7 +112,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
           >
             <Menu.Items
               static
-              className="absolute right-0 mt-2 w-56 bg-white rounded-md ring-1 ring-black ring-opacity-5 shadow-lg origin-top-right focus:outline-none"
+              className="absolute right-0 mt-2 w-56 bg-white text-gray-700 rounded-md ring-1 ring-black ring-opacity-5 shadow-lg origin-top-right focus:outline-none"
             >
               <div className="py-1">
                 <Menu.Item>
@@ -125,7 +125,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
                     }
                   >
                     <GrDocumentCsv
-                      className="mr-3 w-5 h-5 text-gray-400 group-hover:text-gray-500"
+                      className="mr-3 w-5 h-5  group-hover:"
                       aria-hidden="true"
                     />
                     All rows
@@ -141,7 +141,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
                     }
                   >
                     <GrDocumentCsv
-                      className="mr-3 w-5 h-5 text-gray-400 group-hover:text-gray-500"
+                      className="mr-3 w-5 h-5  group-hover:"
                       aria-hidden="true"
                     />
                     Filtered rows
@@ -236,15 +236,15 @@ export default function Table<T extends Record<string, unknown>>({
         {displayExportOptions && <ExportRows exportData={exportData} />}
       </div>
       {/* table */}
-      <div className="flex flex-col py-2">
-        <div className="overflow-x-auto sm:rounded-lg border-b border-gray-200 shadow">
+      <div className="py-2">
+        <div className="overflow-x-auto sm:rounded-lg border border-gray-300 shadow">
           <div className="inline-block min-w-full align-middle">
-            <div className=" overflow-hidden">
+            <div className="">
               <table
                 {...getTableProps()}
-                className="min-w-full divide-y divide-gray-200"
+                className="min-w-full divide-y divide-gray-300"
               >
-                <thead className="bg-gray-50">
+                <thead className="bg-primary-700">
                   {headerGroups.map((headerGroup) => (
                     <>
                       <tr {...headerGroup.getHeaderGroupProps()}>
@@ -253,7 +253,7 @@ export default function Table<T extends Record<string, unknown>>({
                           // eslint-disable-next-line react/jsx-key
                           <th
                             scope="col"
-                            className="py-4 px-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            className="py-4 px-3 text-xs font-medium tracking-wider text-left uppercase"
                             {...column.getHeaderProps(
                               column.getSortByToggleProps()
                             )}
@@ -265,12 +265,12 @@ export default function Table<T extends Record<string, unknown>>({
                                 <span>
                                   {column.isSorted ? (
                                     column.isSortedDesc ? (
-                                      <FaSortDown className="w-4 h-4 text-gray-400" />
+                                      <FaSortDown className="w-4 h-4 " />
                                     ) : (
-                                      <FaSortUp className="w-4 h-4 text-gray-400" />
+                                      <FaSortUp className="w-4 h-4 " />
                                     )
                                   ) : (
-                                    <FaSort className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100" />
+                                    <FaSort className="w-4 h-4  opacity-0 group-hover:opacity-100" />
                                   )}
                                 </span>
                               )}
@@ -284,7 +284,7 @@ export default function Table<T extends Record<string, unknown>>({
                           // eslint-disable-next-line react/jsx-key
                           <th
                             scope="col"
-                            className="px-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase"
+                            className="px-3 text-xs font-medium tracking-wider text-left  uppercase"
                             {...column.getHeaderProps()}
                           >
                             {column.Filter ? (
@@ -300,7 +300,7 @@ export default function Table<T extends Record<string, unknown>>({
                 </thead>
                 <tbody
                   {...getTableBodyProps()}
-                  className="bg-white divide-y divide-gray-200"
+                  className="bg-primary-500 divide-y divide-gray-600"
                 >
                   {page.length === 0 ? (
                     <tr role="row">
@@ -320,7 +320,6 @@ export default function Table<T extends Record<string, unknown>>({
                         <tr
                           {...row.getRowProps()}
                           className={classNames(
-                            idx % 2 === 0 ? 'bg-white' : 'bg-gray-50',
                             onRowClick
                               ? 'hover:cursor-pointer  hover:bg-gray-100'
                               : ''
@@ -350,11 +349,11 @@ export default function Table<T extends Record<string, unknown>>({
                 </tbody>
               </table>
               <nav
-                className="flex justify-between items-center py-3 px-4 bg-white border-t border-gray-200"
+                className="flex justify-between items-center py-3 px-4 bg-primary-700 border-t border-gray-300"
                 aria-label="Pagination"
               >
                 <div className="block">
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm ">
                     <span className="font-medium">{rows.length}</span> Results
                   </p>
                 </div>
@@ -370,7 +369,11 @@ export default function Table<T extends Record<string, unknown>>({
                         }}
                       >
                         {[20, 50, 100, 250, 500].map((pageSize) => (
-                          <option key={pageSize} value={pageSize}>
+                          <option
+                            className="text-gray-700"
+                            key={pageSize}
+                            value={pageSize}
+                          >
                             {pageSize} rows
                           </option>
                         ))}
@@ -379,7 +382,8 @@ export default function Table<T extends Record<string, unknown>>({
                   </div>
                   <IconButton
                     aria-label="First"
-                    colorScheme="gray"
+                    colorScheme="secondary"
+                    color="primary.700"
                     onClick={() => gotoPage(0)}
                     disabled={!canPreviousPage}
                     icon={<HiChevronDoubleLeft />}
@@ -387,25 +391,28 @@ export default function Table<T extends Record<string, unknown>>({
 
                   <IconButton
                     aria-label="Previous"
-                    colorScheme="gray"
+                    colorScheme="secondary"
+                    color="primary.700"
                     onClick={() => previousPage()}
                     disabled={!canPreviousPage}
                     icon={<HiChevronLeft />}
                   ></IconButton>
-                  <Button disabled={true} colorScheme="gray">
+                  <Button>
                     {`Page ${state.pageIndex + 1} of ${pageOptions.length}`}
                   </Button>
 
                   <IconButton
                     aria-label="Next"
-                    colorScheme="gray"
+                    colorScheme="secondary"
+                    color="primary.700"
                     onClick={() => nextPage()}
                     disabled={!canNextPage}
                     icon={<HiChevronRight />}
                   ></IconButton>
                   <IconButton
                     aria-label="Last"
-                    colorScheme="gray"
+                    colorScheme="secondary"
+                    color="primary.700"
                     onClick={() => gotoPage(pageCount - 1)}
                     disabled={!canNextPage}
                     icon={<HiChevronDoubleRight />}

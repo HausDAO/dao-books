@@ -59,7 +59,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <Component {...pageProps} />
+            <div className="flex flex-col xl:max-w-7xl lg:max-w-5xl md:max-w-4xl m-auto">
+              <Component {...pageProps} />
+            </div>
           </div>
         </div>
       </ChakraProvider>

@@ -6,8 +6,8 @@ export const MultiLineCell: FC<{ title: string; description: string }> = ({
 }) => {
   return (
     <div className="flex flex-col space-y-2">
-      <div className="text-gray-900">{title}</div>
-      <div className="text-xs text-gray-500">{description}</div>
+      <div>{title}</div>
+      <div className="text-xs">{description}</div>
     </div>
   )
 }

@@ -23,7 +23,7 @@ export function SelectColumnFilter<T extends Record<string, unknown>>({
 
   // Render a multi-select box
   return (
-    <label className="flex gap-x-2 items-baseline">
+    <label className="flex gap-x-2 items-baseline ">
       <Select
         name={id}
         id={id}
@@ -32,9 +32,11 @@ export function SelectColumnFilter<T extends Record<string, unknown>>({
           setFilter(e.target.value || undefined)
         }}
       >
-        <option value="">All</option>
+        <option className="text-gray-700" value="">
+          All
+        </option>
         {options.map((option, i) => (
-          <option key={i} value={option}>
+          <option className="text-gray-700" key={i} value={option}>
             {option}
           </option>
         ))}

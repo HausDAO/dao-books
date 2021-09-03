@@ -41,7 +41,11 @@ export const getServerSideProps = async (
 
     if (minion === undefined) {
       return {
-        notFound: true,
+        props: {
+          error: {
+            message: (error as Error).message,
+          },
+        },
       }
     }
 
@@ -245,7 +249,11 @@ export const getServerSideProps = async (
     }
   } catch (error) {
     return {
-      notFound: true,
+      props: {
+        error: {
+          message: (error as Error).message,
+        },
+      },
     }
   }
 }

@@ -39,6 +39,10 @@ export const theme = extendTheme(
       heading: 'mulish',
       body: 'mulish',
     },
+    initialColorMode: 'dark',
+    useSystemColorMode: false,
   },
-  withDefaultColorScheme({ colorScheme: 'primary' })
+  withDefaultColorScheme({
+    colorScheme: 'primary',
+  })
 )
