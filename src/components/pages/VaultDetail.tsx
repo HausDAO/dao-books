@@ -184,6 +184,7 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     // @ts-ignore this is fine
     accessor: 'token.symbol',
     Filter: SelectColumnFilter,
+    width: 500,
     filter: 'includes',
     Cell: ({ value, row }: Cell<TokenBalanceLineItem>) => {
       const tokenExplorerLink = row.original.tokenExplorerLink
@@ -192,7 +193,7 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
           <div>{value}</div>
           <Link href={tokenExplorerLink}>
             <a
-              className="text-xs hover:underline flex items-center"
+              className="text-xs hover:underline flex items-center min-w-max"
               target="_blank"
               rel="noopener noreferrer"
             >

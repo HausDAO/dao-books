@@ -253,7 +253,7 @@ export default function Table<T extends Record<string, unknown>>({
                           // eslint-disable-next-line react/jsx-key
                           <th
                             scope="col"
-                            className="py-4 px-3 text-xs font-medium tracking-wider text-left uppercase"
+                            className="py-4 px-3 text-xs font-medium tracking-wider text-left uppercase min-w-max"
                             {...column.getHeaderProps(
                               column.getSortByToggleProps()
                             )}
@@ -349,37 +349,35 @@ export default function Table<T extends Record<string, unknown>>({
                 </tbody>
               </table>
               <nav
-                className="flex justify-between items-center py-3 px-4 bg-primary-700 border-t border-gray-300"
+                className="flex flex-wrap justify-between items-center gap-2 py-3 px-4 bg-primary-700 border-t border-gray-300"
                 aria-label="Pagination"
               >
-                <div className="block">
-                  <p className="text-sm ">
-                    <span className="font-medium">{rows.length}</span> Results
-                  </p>
+                <div className="flex text-sm font-medium">
+                  {rows.length} Results
                 </div>
-                <div className="flex flex-wrap flex-1 justify-end items-center space-x-2">
-                  <div className="flex gap-x-2 items-baseline">
-                    <label>
-                      <span className="sr-only">Items Per Page</span>
-                      <Select
-                        className="block w-full rounded-md border-gray-300 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
-                        value={state.pageSize}
-                        onChange={(e) => {
-                          setPageSize(Number(e.target.value))
-                        }}
-                      >
-                        {[20, 50, 100, 250, 500].map((pageSize) => (
-                          <option
-                            className="text-gray-700"
-                            key={pageSize}
-                            value={pageSize}
-                          >
-                            {pageSize} rows
-                          </option>
-                        ))}
-                      </Select>
-                    </label>
+                <label className="flex-1 flex justify-end">
+                  <div className="w-max">
+                    <span className="sr-only">Items Per Page</span>
+                    <Select
+                      className="block rounded-md border-gray-300 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50"
+                      value={state.pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value))
+                      }}
+                    >
+                      {[20, 50, 100, 250, 500].map((pageSize) => (
+                        <option
+                          className="text-gray-700"
+                          key={pageSize}
+                          value={pageSize}
+                        >
+                          {pageSize} rows
+                        </option>
+                      ))}
+                    </Select>
                   </div>
+                </label>
+                <div className="flex flex-wrap items-center gap-2">
                   <IconButton
                     aria-label="First"
                     colorScheme="secondary"

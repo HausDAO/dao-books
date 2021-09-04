@@ -6,6 +6,7 @@ import {
   Input,
   PopoverArrow,
   Portal,
+  useMediaQuery,
 } from '@chakra-ui/react'
 import React from 'react'
 import { ColumnInstance } from 'react-table'
@@ -58,6 +59,8 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
     return { min, max }
   }, [id, preFilteredRows])
 
+  const [isSmallerThan768] = useMediaQuery('(max-width: 768px)')
+
   const options: UseInputOptions = {
     // Select today as default
     defaultSelected: momentUTC(new Date()).subtract('1', 'M').toDate(),
@@ -84,7 +87,7 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
           <PopoverArrow />
           <DayPicker
             {...input.dayPickerProps}
-            numberOfMonths={2}
+            numberOfMonths={isSmallerThan768 ? 1 : 2}
             mode="range"
             onSelect={(range: any) => {
               if (range) {
