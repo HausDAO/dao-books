@@ -23,7 +23,7 @@ export function SelectColumnFilter<T extends Record<string, unknown>>({
 
   // Render a multi-select box
   return (
-    <label className="flex gap-x-2 items-baseline ">
+    <label className="flex gap-x-2 items-baseline min-w-max">
       <Select
         name={id}
         id={id}
