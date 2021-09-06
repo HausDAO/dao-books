@@ -38,6 +38,7 @@ export const Vaults = ({
               name="DAO Treasury"
               address={daoMetadata.contractAddress}
               tokenBalances={moloch.tokenBalances}
+              nbrTokens={moloch.tokenBalances.length}
             />
           </a>
         </Link>
@@ -57,6 +58,8 @@ export const Vaults = ({
                       name={minion.name}
                       address={minion.minionAddress}
                       tokenBalances={minion.tokenBalances}
+                      nbrTokens={minion.tokenBalances.length}
+                      nbrTransactions={minion.transactions.length}
                     />
                   </a>
                 </Link>

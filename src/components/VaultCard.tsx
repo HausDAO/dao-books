@@ -6,12 +6,16 @@ type VaultCardProps = {
   address: string
   name: string
   tokenBalances: TokenBalance[]
+  nbrTokens: number
+  nbrTransactions?: number
 }
 
 export const VaultCard: FC<VaultCardProps> = ({
   name,
   address,
   tokenBalances,
+  nbrTokens,
+  nbrTransactions,
 }) => {
   const [balance, setBalance] = useState<number>()
 
@@ -36,6 +40,12 @@ export const VaultCard: FC<VaultCardProps> = ({
       <div>
         <div className="text-lg">{name}</div>
         <div className="text-sm">$ {formatNumber(balance) || 0}</div>
+        <div className="text-sm">{formatNumber(nbrTokens) || 0} token(s)</div>
+        {nbrTransactions !== undefined && (
+          <div className="text-sm">
+            {formatNumber(nbrTransactions) || 0} transaction(s)
+          </div>
+        )}
       </div>
       <p className="text-secondary-500 text-sm hover:underline">
         Vault Book &rarr;
