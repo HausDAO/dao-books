@@ -8,11 +8,12 @@ import {
   Portal,
   useMediaQuery,
 } from '@chakra-ui/react'
+import { format } from 'date-fns'
 import React from 'react'
+import { DayPicker, useInput, UseInputOptions } from 'react-day-picker'
 import { ColumnInstance } from 'react-table'
 import 'react-day-picker/style.css'
-import { DayPicker, useInput, UseInputOptions } from 'react-day-picker'
-import { format } from 'date-fns'
+
 import { momentUTC } from '../../utils/methods'
 
 /**
@@ -53,7 +54,6 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
 
       if (Number(date) > max) {
         max = Number(date)
-        return
       }
     })
     return { min, max }

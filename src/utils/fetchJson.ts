@@ -24,7 +24,7 @@ export default async function fetchJson<T>(
     error.response = response
     error.data = data
     throw error
-  } catch (error) {
+  } catch (error: any) {
     if (!error.data) {
       error.data = { message: error.message }
     }

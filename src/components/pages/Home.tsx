@@ -5,12 +5,13 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from '@chakra-ui/react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
-import { H1, H2, Button } from '../atoms'
+import { useHistory } from 'react-router'
+import { Link } from 'react-router-dom'
+
 import { Card } from '../Card'
+import { H1, H2, Button } from '../atoms'
 
 const POPULAR_DAOS = [
   {
@@ -51,10 +52,10 @@ export const Home: FC = () => {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = useForm<{ address: string }>()
-  const router = useRouter()
+  const history = useHistory()
   const onSubmit = (data: { address: string }) => {
     // TODO: should we validate if the address is correct?
-    router.push(`/dao/${data.address}`)
+    history.push(`/dao/${data.address}`)
   }
   return (
     <div className="space-y-8 p-4">
@@ -85,21 +86,25 @@ export const Home: FC = () => {
         <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
           {POPULAR_DAOS.map((dao) => {
             return (
-              <Link key={dao.address} href={`/dao/${dao.address}`}>
-                <a className="inline-flex">
-                  <Card title={dao.name} description={dao.description} />
-                </a>
+              <Link
+                className="inline-flex"
+                key={dao.address}
+                to={`/dao/${dao.address}`}
+              >
+                <Card title={dao.name} description={dao.description} />
               </Link>
             )
           })}
         </div>
-        <Link href="https://app.daohaus.club/explore">
-          <a target="_blank" rel="noopener noreferrer">
-            <p className="font-bold pt-4 hover:underline">
-              Explore All DAOs &rarr;
-            </p>
-          </a>
-        </Link>
+        <a
+          href="https://app.daohaus.club/explore"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p className="font-bold pt-4 hover:underline">
+            Explore All DAOs &rarr;
+          </p>
+        </a>
       </div>
     </div>
   )

@@ -1,32 +1,54 @@
 import moment from 'moment'
-import { InferGetServerSidePropsType } from 'next'
-import dynamic from 'next/dynamic'
-import Link from 'next/link'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { HiOutlineExternalLink } from 'react-icons/hi'
+import { useParams } from 'react-router'
 import { Cell, Column } from 'react-table'
-import { getServerSideProps } from '../../pages/dao/[id]/treasury'
-import { TokenBalance } from '../../types/DAO'
-import { formatNumber } from '../../utils/methods'
-import { BalanceCard } from '../BalanceCard'
-import { MultiLineCell, SelectColumnFilter } from '../table'
+
+import { TokenBalance } from '../../../types/DAO'
+import { formatNumber } from '../../../utils/methods'
+import { BalanceCard } from '../../BalanceCard'
+import { MultiLineCell, SelectColumnFilter } from '../../table'
+import { DateRangeFilter, filterByDate } from '../../table/DateRangeFilter'
+import Table from '../../table/Table'
+import { getMinionDetailProps } from './getMinionDetailProps'
+import { getTreasuryDetailProps } from './getTreasuryDetailProps'
+
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
-import { DateRangeFilter, filterByDate } from '../table/DateRangeFilter'
 // Making this client side because chart.js cannot render on server side
-const Table = dynamic(() => import('@/components/table/Table'), {
-  ssr: false,
-})
-export const VaultDetail = ({
-  daoMetadata,
-  transactions,
-  tokenBalances,
-  combinedFlows,
-  vaultName,
-  error,
-}: InferGetServerSidePropsType<typeof getServerSideProps>): JSX.Element => {
+
+export const VaultDetail = (): JSX.Element => {
   const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
+  const { daoAddress, minionAddress } =
+    useParams<{ daoAddress: string; minionAddress?: string }>()
+
+  const [props, setProps] = useState<any>({})
+  const updateProps = async () => {
+    if (minionAddress) {
+      setProps(await getMinionDetailProps(daoAddress, minionAddress))
+    } else {
+      setProps(await getTreasuryDetailProps(daoAddress))
+    }
+  }
+
+  useEffect(() => {
+    updateProps()
+  }, [])
+
+  const {
+    daoMetadata,
+    transactions,
+    tokenBalances,
+    combinedFlows,
+    vaultName,
+    error,
+  } = props
+
+  if (!daoMetadata && !error) {
+    return <>Loading</>
+  }
+
   if (error) {
     return <Error />
   }
@@ -116,16 +138,15 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       return (
         <div className="flex rounded-md shadow flex-col p-4 w-80 space-y-2">
           <div>{date}</div>
-          <Link href={txExplorerLink}>
-            <a
-              className="text-xs hover:underline flex items-center"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View Tx
-              <HiOutlineExternalLink className="inline ml-1" />
-            </a>
-          </Link>
+          <a
+            href={txExplorerLink}
+            className="text-xs hover:underline flex items-center"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Tx
+            <HiOutlineExternalLink className="inline ml-1" />
+          </a>
         </div>
       )
     },
@@ -191,16 +212,15 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
       return (
         <div className="flex flex-col space-y-2 p-4">
           <div>{value}</div>
-          <Link href={tokenExplorerLink}>
-            <a
-              className="text-xs hover:underline flex items-center min-w-max"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View Contract
-              <HiOutlineExternalLink className="inline ml-1" />
-            </a>
-          </Link>
+          <a
+            href={tokenExplorerLink}
+            className="text-xs hover:underline flex items-center min-w-max"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View Contract
+            <HiOutlineExternalLink className="inline ml-1" />
+          </a>
         </div>
       )
     },

@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
-import fetchGraph from '@/utils/fetchGraph'
 import { ApolloQueryResult } from '@apollo/client'
+import { useState, useEffect } from 'react'
+
+import fetchGraph from '@/utils/fetchGraph'
 
 const useOnchainData = <T, V>(
   network: string,
@@ -21,7 +22,7 @@ const useOnchainData = <T, V>(
       try {
         const graphResult = await fetchGraph<T, V>(network, query, variables)
         setData(graphResult)
-      } catch (error) {
+      } catch (error: any) {
         setError(error)
       } finally {
         setLoading(false)

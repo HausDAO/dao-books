@@ -1,11 +1,12 @@
-import { useRouter } from 'next/router'
 import { FC } from 'react'
+import { useHistory } from 'react-router'
+
 import { Button } from './atoms'
 
 export const Error: FC = () => {
-  const router = useRouter()
+  const history = useHistory()
   const handleGoToHome = () => {
-    router.replace('/')
+    history.replace('/')
   }
 
   return (

@@ -1,72 +1,13 @@
-import { orderBy, startCase } from 'lodash'
-import { GetServerSidePropsContext } from 'next'
-import {
-  TokenBalanceLineItem,
-  VaultDetail,
-  VaultTransaction,
-} from '../../../components/pages'
-import { getDAOMetadata } from '../../../services/getDAOMetadata'
-import { cacheTokenPrices } from '../../../services/getTokenUSDPrice'
-import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
-import { getTokenExplorer } from '../../../utils/explorer'
-import fetchGraph from '../../../utils/fetchGraph'
-import fetchStatsGraph from '../../../utils/fetchStatsGraph'
-import {
-  convertTokenToValue,
-  convertTokenValueToUSD,
-} from '../../../utils/methods'
+import { orderBy } from 'lodash'
 
-export default VaultDetail
+import { TokenBalanceLineItem, VaultTransaction } from '.'
+import { getMinions } from '../../../services/getMinions'
 
-const GET_MOLOCH = `
-query moloch($contractAddr: String!) {
-  moloch(id: $contractAddr) {
-    id
-    minions {
-      minionAddress
-    }
-    tokenBalances(where: {guildBank: true}) {
-      token {
-        tokenAddress
-        symbol
-        decimals
-      }
-      tokenBalance
-    }
-  }
-}
-`
-
-// TODO: implement pagination server side
-const BALANCES = `
-query MolochBalances($molochAddress: String!) {
-  balances(
-    first: 1000,
-    where: {molochAddress: $molochAddress, action_not: "summon"}
-    orderBy: timestamp
-    orderDirection: desc
-  ) {
-    id
-    timestamp
-    balance
-    tokenSymbol
-    tokenAddress
-    tokenDecimals
-    currentShares
-    currentLoot
-    action
-    payment
-    tribute
-    amount
-  }
-}
-`
-type MolochData = {
-  moloch: Moloch
-}
-type MolochStatsBalancesData = {
-  balances: MolochStatsBalance[]
-}
+import { getDAOMetadata } from '@/services/getDAOMetadata'
+import { cacheTokenPrices } from '@/services/getTokenUSDPrice'
+import { MinionTransaction, TokenBalance } from '@/types/DAO'
+import { getTokenExplorer } from '@/utils/explorer'
+import { convertTokenToValue, convertTokenValueToUSD } from '@/utils/methods'
 
 type CalculatedTokenBalances = {
   [tokenAddress: string]: {
@@ -78,30 +19,27 @@ type CalculatedTokenBalances = {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
+export const getMinionDetailProps = async (
+  daoAddress: string,
+  minionAddress: string
 ) => {
-  const { id: daoAddress } = context.query
-
   // FIXME: A hack to cache token prices before we fetch prices for all tokens in parallel
   await cacheTokenPrices()
 
   try {
     const daoMeta = await getDAOMetadata(daoAddress as string)
-    const molochStatsBalances = await fetchStatsGraph<
-      MolochStatsBalancesData,
-      { molochAddress: string }
-    >(daoMeta.network, BALANCES, {
-      molochAddress: daoMeta.contractAddress,
-    })
-
-    const moloch = await fetchGraph<MolochData, { contractAddr: string }>(
-      daoMeta.network,
-      GET_MOLOCH,
-      {
-        contractAddr: daoMeta.contractAddress,
-      }
+    const cachedMinions = await getMinions(daoAddress as string)
+    const minion = cachedMinions.find(
+      (cachedMinion) => cachedMinion.minionAddress === minionAddress
     )
+
+    if (minion === undefined) {
+      return {
+        error: {
+          message: 'Minion not found',
+        },
+      }
+    }
 
     // used to store all the inflow and outflow of each token when iterating over the list of moloch stats
     const calculatedTokenBalances: CalculatedTokenBalances = {}
@@ -146,43 +84,29 @@ export const getServerSideProps = async (
       }
     }
 
-    const mapMolochStatsToTreasuryTransaction = async (
-      molochStatsBalances: MolochStatsBalance[]
+    const mapMinionTransactionsToTreasuryTransaction = async (
+      minionTransactions: MinionTransaction[]
     ): Promise<VaultTransaction[]> => {
       const treasuryTransactions = await Promise.all(
-        molochStatsBalances.map(async (molochStatBalance) => {
+        minionTransactions.map(async (minionTransaction) => {
           const usdValue = await convertTokenValueToUSD({
             token: {
-              tokenAddress: molochStatBalance.tokenAddress,
-              decimals: molochStatBalance.tokenDecimals,
-              symbol: molochStatBalance.tokenSymbol,
+              tokenAddress: minionTransaction.tokenAddress,
+              decimals: minionTransaction.tokenDecimals,
+              symbol: minionTransaction.tokenSymbol,
             },
-            tokenBalance: molochStatBalance.amount,
+            tokenBalance: Number(minionTransaction.value),
           })
 
           const tokenValue = convertTokenToValue(
-            molochStatBalance.amount,
-            molochStatBalance.tokenDecimals
+            minionTransaction.value,
+            minionTransaction.tokenDecimals
           )
 
           const balances = (() => {
-            if (
-              molochStatBalance.payment === false &&
-              molochStatBalance.tribute === false
-            ) {
-              return {
-                in: 0,
-                usdIn: 0,
-                out: 0,
-                usdOut: 0,
-              }
-            }
-            if (
-              molochStatBalance.payment === false &&
-              molochStatBalance.tribute === true
-            ) {
+            if (minionTransaction.deposit === true) {
               incrementInflow(
-                molochStatBalance.tokenAddress,
+                minionTransaction.tokenAddress,
                 tokenValue,
                 usdValue
               )
@@ -194,12 +118,9 @@ export const getServerSideProps = async (
               }
             }
 
-            if (
-              molochStatBalance.payment === true &&
-              molochStatBalance.tribute === false
-            ) {
+            if (minionTransaction.deposit === false) {
               incrementOutflow(
-                molochStatBalance.tokenAddress,
+                minionTransaction.tokenAddress,
                 tokenValue,
                 usdValue
               )
@@ -221,18 +142,18 @@ export const getServerSideProps = async (
 
           // const txExplorerLink = getTxExplorer(
           //   daoMeta.network,
-          //   molochStatBalance.id
+          //   minionTransaction.id
           // )
 
           // TODO: To be implemented later
           const txExplorerLink = '#'
 
           return {
-            date: molochStatBalance.timestamp,
-            type: startCase(molochStatBalance.action),
-            tokenSymbol: molochStatBalance.tokenSymbol,
-            tokenDecimals: molochStatBalance.tokenDecimals,
-            tokenAddress: molochStatBalance.tokenAddress,
+            date: minionTransaction.timestamp,
+            type: minionTransaction.deposit ? 'Deposit' : 'Withdraw',
+            tokenSymbol: minionTransaction.tokenSymbol,
+            tokenDecimals: minionTransaction.tokenDecimals,
+            tokenAddress: minionTransaction.tokenAddress,
             txExplorerLink,
             ...balances,
           }
@@ -241,12 +162,12 @@ export const getServerSideProps = async (
       return treasuryTransactions
     }
 
-    const mapMolochTokenBalancesToTokenBalanceLineItem = async (
-      molochTokenBalances: TokenBalance[],
+    const mapMinionTokenBalancesToTokenBalanceLineItem = async (
+      minionTokenBalances: TokenBalance[],
       calculatedTokenBalances: CalculatedTokenBalances
     ): Promise<TokenBalanceLineItem[]> => {
       const tokenBalanceLineItems = await Promise.all(
-        molochTokenBalances.map(async (molochTokenBalance) => {
+        minionTokenBalances.map(async (molochTokenBalance) => {
           const usdValue = await convertTokenValueToUSD(molochTokenBalance)
 
           const tokenValue = convertTokenToValue(
@@ -288,12 +209,12 @@ export const getServerSideProps = async (
       return tokenBalanceLineItems
     }
 
-    const treasuryTransactions = await mapMolochStatsToTreasuryTransaction(
-      molochStatsBalances.data.balances
+    const minionTransactions = await mapMinionTransactionsToTreasuryTransaction(
+      minion.transactions
     )
 
-    const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
-      moloch.data.moloch.tokenBalances,
+    const tokenBalances = await mapMinionTokenBalancesToTokenBalanceLineItem(
+      minion.tokenBalances,
       calculatedTokenBalances
     )
 
@@ -306,24 +227,20 @@ export const getServerSideProps = async (
     })
 
     return {
-      props: {
-        daoMetadata: daoMeta,
-        transactions: treasuryTransactions,
-        tokenBalances: orderBy(
-          tokenBalances,
-          ['closing.usdValue', 'closing.tokenValue'],
-          ['desc', 'desc']
-        ),
-        combinedFlows,
-        vaultName: 'DAO Treasury',
-      },
+      daoMetadata: daoMeta,
+      transactions: minionTransactions,
+      tokenBalances: orderBy(
+        tokenBalances,
+        ['closing.usdValue', 'closing.tokenValue'],
+        ['desc', 'desc']
+      ),
+      combinedFlows,
+      vaultName: minion.name,
     }
   } catch (error) {
     return {
-      props: {
-        error: {
-          message: (error as Error).message,
-        },
+      error: {
+        message: (error as Error).message,
       },
     }
   }

@@ -1,4 +1,3 @@
-import { classNames } from '@/utils/methods'
 import {
   IconButton,
   Input,
@@ -33,7 +32,9 @@ import {
 } from 'react-table'
 // @ts-ignore
 import { useExportData } from 'react-table-plugins'
+
 import { Button } from '@/components/atoms'
+import { classNames } from '@/utils/methods'
 
 // @ts-ignore
 function getExportFileBlob({ columns, data, fileType, fileName }) {
@@ -120,9 +121,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
                     onClick={() => {
                       exportData('csv', true)
                     }}
-                    className={
-                      'cursor-pointer group flex items-center px-4 py-2 text-sm'
-                    }
+                    className="cursor-pointer group flex items-center px-4 py-2 text-sm"
                   >
                     <GrDocumentCsv
                       className="mr-3 w-5 h-5  group-hover:"
@@ -136,9 +135,7 @@ const ExportRows = ({ exportData }: { exportData: any }) => {
                     onClick={() => {
                       exportData('csv', false)
                     }}
-                    className={
-                      'cursor-pointer group flex items-center px-4 py-2 text-sm'
-                    }
+                    className="cursor-pointer group flex items-center px-4 py-2 text-sm"
                   >
                     <GrDocumentCsv
                       className="mr-3 w-5 h-5  group-hover:"
@@ -385,7 +382,7 @@ export default function Table<T extends Record<string, unknown>>({
                     onClick={() => gotoPage(0)}
                     disabled={!canPreviousPage}
                     icon={<HiChevronDoubleLeft />}
-                  ></IconButton>
+                  />
 
                   <IconButton
                     aria-label="Previous"
@@ -394,7 +391,7 @@ export default function Table<T extends Record<string, unknown>>({
                     onClick={() => previousPage()}
                     disabled={!canPreviousPage}
                     icon={<HiChevronLeft />}
-                  ></IconButton>
+                  />
                   <Button>
                     {`Page ${state.pageIndex + 1} of ${pageOptions.length}`}
                   </Button>
@@ -406,7 +403,7 @@ export default function Table<T extends Record<string, unknown>>({
                     onClick={() => nextPage()}
                     disabled={!canNextPage}
                     icon={<HiChevronRight />}
-                  ></IconButton>
+                  />
                   <IconButton
                     aria-label="Last"
                     colorScheme="secondary"
@@ -414,7 +411,7 @@ export default function Table<T extends Record<string, unknown>>({
                     onClick={() => gotoPage(pageCount - 1)}
                     disabled={!canNextPage}
                     icon={<HiChevronDoubleRight />}
-                  ></IconButton>
+                  />
                 </div>
               </nav>
             </div>

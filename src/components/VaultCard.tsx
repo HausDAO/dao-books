@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { FC } from 'react'
+import { useEffect, useState, FC } from 'react'
+
 import { TokenBalance } from '../types/DAO'
 import { convertTokenValueToUSD, formatNumber } from '../utils/methods'
 type VaultCardProps = {
@@ -39,11 +39,11 @@ export const VaultCard: FC<VaultCardProps> = ({
     <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 lg:w-80 md:w-56 w-48 space-y-2">
       <div>
         <div className="text-lg">{name}</div>
-        <div className="text-sm">$ {formatNumber(balance) || 0}</div>
-        <div className="text-sm">{formatNumber(nbrTokens) || 0} token(s)</div>
+        <div className="text-sm">$ {formatNumber(balance) ?? 0}</div>
+        <div className="text-sm">{formatNumber(nbrTokens) ?? 0} token(s)</div>
         {nbrTransactions !== undefined && (
           <div className="text-sm">
-            {formatNumber(nbrTransactions) || 0} transaction(s)
+            {formatNumber(nbrTransactions) ?? 0} transaction(s)
           </div>
         )}
       </div>

@@ -28,7 +28,7 @@ export type DaoMetadata = {
       }
     }
   } & {
-    [minion: string]: Array<string>
+    [minion: string]: string[]
   }
   allies: string[]
 }

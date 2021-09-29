@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+
 import { DAO_HAUS_API_URL } from '../../utils/constants'
 import { DaoMetadata } from './types'
 
@@ -37,4 +38,4 @@ const useDaoMetadata = (daoAddress: string): DaoMetadataReturnType => {
   }
 }
 
-export default useDaoMetadata
+export { useDaoMetadata }

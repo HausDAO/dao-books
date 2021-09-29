@@ -1,3 +1,4 @@
+import moment, { Moment } from 'moment'
 import {
   Children,
   ElementType,
@@ -5,9 +6,9 @@ import {
   ReactElement,
   ReactNode,
 } from 'react'
+
 import { getTokenUSDPrice } from '../services/getTokenUSDPrice'
 import { Token, TokenBalance } from '../types/DAO'
-import moment, { Moment } from 'moment'
 
 export const momentUTC = moment.utc
 

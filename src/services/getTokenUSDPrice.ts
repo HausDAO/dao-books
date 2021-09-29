@@ -1,5 +1,6 @@
-import fetchJson from '../utils/fetchJson'
 import cache from 'memory-cache'
+
+import fetchJson from '../utils/fetchJson'
 
 const getTokenPrices = async () => {
   let tokenPrices: {
@@ -30,5 +31,4 @@ export const getTokenUSDPrice = async (
 
 export const cacheTokenPrices = async (): Promise<void> => {
   await getTokenPrices()
-  return
 }
