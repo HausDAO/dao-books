@@ -6,7 +6,7 @@ import { getMinions } from '../../../services/getMinions'
 import { getDAOMetadata } from '@/services/getDAOMetadata'
 import { cacheTokenPrices } from '@/services/getTokenUSDPrice'
 import { MinionTransaction, TokenBalance } from '@/types/DAO'
-import { getTokenExplorer } from '@/utils/explorer'
+import { getTokenExplorerLink } from '@/utils/explorer'
 import { convertTokenToValue, convertTokenValueToUSD } from '@/utils/methods'
 
 type CalculatedTokenBalances = {
@@ -140,7 +140,7 @@ export const getMinionDetailProps = async (
             }
           })()
 
-          // const txExplorerLink = getTxExplorer(
+          // const txExplorerLink = getTxExplorerLink(
           //   daoMeta.network,
           //   minionTransaction.id
           // )
@@ -175,7 +175,7 @@ export const getMinionDetailProps = async (
             molochTokenBalance.token.decimals
           )
 
-          const tokenExplorerLink = getTokenExplorer(
+          const tokenExplorerLink = getTokenExplorerLink(
             daoMeta.network,
             molochTokenBalance.token.tokenAddress
           )

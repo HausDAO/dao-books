@@ -4,10 +4,13 @@ const EXPLORER_MAP: { [network: string]: string } = {
   mainnet: 'https://etherscan.io',
 }
 
-export const getTokenExplorer = (network: string, address: string): string => {
+export const getTokenExplorerLink = (
+  network: string,
+  address: string
+): string => {
   return `${EXPLORER_MAP[network] || 'https://etherscan.io'}/address/${address}`
 }
 
-export const getTxExplorer = (network: string, address: string): string => {
+export const getTxExplorerLink = (network: string, address: string): string => {
   return `${EXPLORER_MAP[network] || 'https://etherscan.io'}/tx/${address}`
 }

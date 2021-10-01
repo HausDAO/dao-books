@@ -4,7 +4,10 @@ import { TokenBalanceLineItem, VaultTransaction } from '.'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
 import { cacheTokenPrices } from '../../../services/getTokenUSDPrice'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
-import { getTokenExplorer } from '../../../utils/explorer'
+import {
+  getTokenExplorerLink,
+  getTxExplorerLink,
+} from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
 import {
@@ -45,6 +48,7 @@ query MolochBalances($molochAddress: String!) {
     balance
     tokenSymbol
     tokenAddress
+    transactionHash
     tokenDecimals
     currentShares
     currentLoot
@@ -209,13 +213,10 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             }
           })()
 
-          // const txExplorerLink = getTxExplorer(
-          //   daoMeta.network,
-          //   molochStatBalance.id
-          // )
-
-          // TODO: To be implemented later
-          const txExplorerLink = '#'
+          const txExplorerLink = getTxExplorerLink(
+            daoMeta.network,
+            molochStatBalance.transactionHash
+          )
 
           return {
             date: molochStatBalance.timestamp,
@@ -244,7 +245,7 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             molochTokenBalance.token.decimals
           )
 
-          const tokenExplorerLink = getTokenExplorer(
+          const tokenExplorerLink = getTokenExplorerLink(
             daoMeta.network,
             molochTokenBalance.token.tokenAddress
           )
