@@ -1,22 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import '@fontsource/mulish/200.css'
-import '@fontsource/mulish/300.css'
-import '@fontsource/mulish/400.css'
-import '@fontsource/mulish/500.css'
-import '@fontsource/mulish/600.css'
-import '@fontsource/mulish/700.css'
-import '@fontsource/mulish/800.css'
-import '@fontsource/mulish/900.css'
-
 import './index.css'
+import { HashRouter as Router } from 'react-router-dom'
 
 import App from './App'
+import { CustomThemeProvider } from './contexts/CustomThemeContext'
 import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Router>
+      <CustomThemeProvider>
+        <App />
+      </CustomThemeProvider>
+    </Router>
   </React.StrictMode>,
   document.getElementById('root')
 )
