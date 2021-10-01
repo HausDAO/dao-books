@@ -41,6 +41,7 @@ export type MolochStatsBalance = {
   tokenSymbol: string
   tokenAddress: string
   tokenDecimals: string
+  transactionHash: string
   amount: number
   payment: boolean
   tribute: boolean
