@@ -1,6 +1,7 @@
 import { orderBy, startCase } from 'lodash'
 
 import { TokenBalanceLineItem, VaultTransaction } from '.'
+import { DaoMetadata } from '../../../hooks/useDaoMetadata/types'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
 import { cacheTokenPrices } from '../../../services/getTokenUSDPrice'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
@@ -34,11 +35,11 @@ query moloch($contractAddr: String!) {
 }
 `
 
-// TODO: implement pagination server side
 const BALANCES = `
-query MolochBalances($molochAddress: String!) {
+query MolochBalances($molochAddress: String!, $first: Int, $skip: Int) {
   balances(
-    first: 1000,
+    first: $first,
+    skip: $skip,
     where: {molochAddress: $molochAddress, action_not: "summon"}
     orderBy: timestamp
     orderDirection: desc
@@ -75,6 +76,35 @@ type CalculatedTokenBalances = {
   }
 }
 
+const retrieveAllBalances = async (daoMeta: DaoMetadata) => {
+  const PAGINATE_COUNT = 1000
+
+  const fetchBalances = async (
+    skip: number,
+    allBalances: MolochStatsBalance[]
+  ): Promise<MolochStatsBalance[]> => {
+    const molochStatsBalances = await fetchStatsGraph<
+      MolochStatsBalancesData,
+      { molochAddress: string; first: number; skip: number }
+    >(daoMeta.network, BALANCES, {
+      molochAddress: daoMeta.contractAddress,
+      first: PAGINATE_COUNT,
+      skip,
+    })
+
+    allBalances = [...allBalances, ...molochStatsBalances.data.balances]
+    skip += PAGINATE_COUNT
+
+    if (molochStatsBalances.data.balances.length === PAGINATE_COUNT) {
+      return fetchBalances(skip, allBalances)
+    }
+
+    return allBalances
+  }
+
+  return fetchBalances(0, [])
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getTreasuryDetailProps = async (daoAddress: string) => {
   // FIXME: A hack to cache token prices before we fetch prices for all tokens in parallel
@@ -82,12 +112,7 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
 
   try {
     const daoMeta = await getDAOMetadata(daoAddress as string)
-    const molochStatsBalances = await fetchStatsGraph<
-      MolochStatsBalancesData,
-      { molochAddress: string }
-    >(daoMeta.network, BALANCES, {
-      molochAddress: daoMeta.contractAddress,
-    })
+    const molochStatsBalances = await retrieveAllBalances(daoMeta)
 
     const moloch = await fetchGraph<MolochData, { contractAddr: string }>(
       daoMeta.network,
@@ -280,7 +305,7 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
     }
 
     const treasuryTransactions = await mapMolochStatsToTreasuryTransaction(
-      molochStatsBalances.data.balances
+      molochStatsBalances
     )
 
     const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
