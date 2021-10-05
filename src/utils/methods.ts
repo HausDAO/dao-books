@@ -1,3 +1,5 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits } from '@ethersproject/units'
 import moment, { Moment } from 'moment'
 import {
   Children,
@@ -44,7 +46,7 @@ export const convertTokenValueToUSD = async (
   const usdPrice = await getTokenUSDPrice(tokenBalance.token.tokenAddress)
   return (
     usdPrice *
-    convertTokenToValue(tokenBalance.tokenBalance, tokenBalance.token.decimals)
+    Number(formatToken(tokenBalance.token.decimals, tokenBalance.tokenBalance))
   )
 }
 
@@ -53,6 +55,17 @@ export const formatNumber = (number?: number): string | undefined => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   })
+}
+
+export const formatToken = (
+  decimals: string | number,
+  number?: BigNumber | string
+): string | undefined => {
+  if (!number) {
+    return
+  }
+  const num = BigNumber.from(number)
+  return formatUnits(num, Number(decimals))
 }
 
 export const convertTokenToValue = (

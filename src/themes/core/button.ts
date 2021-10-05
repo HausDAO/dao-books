@@ -44,7 +44,7 @@ const Button = {
       width: '300px',
     },
     ghost: (props: ButtonProps) => ({
-      padding: props.p || props.padding,
+      padding: props.p ?? props.padding,
     }),
     // 4. Override existing variants
     solid: () => ({
@@ -61,7 +61,7 @@ const Button = {
     outline: (props: ButtonProps) => ({
       borderColor: 'secondary.400',
       bg: 'transparent',
-      color: props.color || 'secondary.400',
+      color: props.color ?? 'secondary.400',
       _hover: {
         borderColor: 'secondary.500',
         color: 'secondary.500',

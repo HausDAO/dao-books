@@ -2,13 +2,13 @@ import { TextProps } from '@chakra-ui/layout'
 
 const TextBoxComponent = {
   baseStyle: (props: TextProps) => ({
-    color: props.color || 'mode.900',
-    textAlign: props.textAlign || null,
+    color: props.color ?? 'mode.900',
+    textAlign: props.textAlign ?? null,
     fontFamily: 'heading',
-    textTransform: props.textTransform || 'uppercase',
+    textTransform: props.textTransform ?? 'uppercase',
     letterSpacing: '0.15em',
-    opacity: props.opacity || 1.0,
-    padding: props.p || props.padding || 0,
+    opacity: props.opacity ?? 1.0,
+    padding: props.p ?? props.padding ?? 0,
   }),
 
   sizes: {
@@ -45,27 +45,27 @@ const TextBoxComponent = {
   },
   variants: {
     label: (props: TextProps) => ({
-      color: props.color || 'mode.900',
-      textAlign: props.textAlign || null,
+      color: props.color ?? 'mode.900',
+      textAlign: props.textAlign ?? null,
       fontFamily: 'heading',
       textTransform: 'uppercase',
       letterSpacing: '0.15em',
       opacity: 0.7,
     }),
     value: (props: TextProps) => ({
-      color: props.color || 'mode.900',
-      textAlign: props.textAlign || null,
+      color: props.color ?? 'mode.900',
+      textAlign: props.textAlign ?? null,
       fontFamily: 'mono',
       textTransform: 'none',
       mt: '9px',
     }),
     body: (props: TextProps) => ({
-      color: props.color || 'mode.900',
-      textAlign: props.textAlign || null,
+      color: props.color ?? 'mode.900',
+      textAlign: props.textAlign ?? null,
       fontFamily: 'body',
-      textTransform: props.textTransform || 'none',
-      fontWeight: props.fontWeight || 400,
-      opacity: props.opacity || 1.0,
+      textTransform: props.textTransform ?? 'none',
+      fontWeight: props.fontWeight ?? 400,
+      opacity: props.opacity ?? 1.0,
       padding: 0,
     }),
   },

@@ -1,11 +1,16 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import moment from 'moment'
-import { useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { useParams } from 'react-router'
 import { Cell, Column } from 'react-table'
 
 import { TokenBalance } from '../../../types/DAO'
-import { formatNumber } from '../../../utils/methods'
+import {
+  convertTokenValueToUSD,
+  formatNumber,
+  formatToken,
+} from '../../../utils/methods'
 import { BalanceCard } from '../../BalanceCard'
 import { MultiLineCell, SelectColumnFilter } from '../../table'
 import { DateRangeFilter, filterByDate } from '../../table/DateRangeFilter'
@@ -103,25 +108,20 @@ export type VaultTransaction = {
   tokenSymbol: string
   tokenDecimals: string
   tokenAddress: string
-  in: number
-  usdIn: number
-  out: number
-  usdOut: number
+  in: BigNumber
+  out: BigNumber
 }
 
 export type TokenBalanceLineItem = TokenBalance & {
   tokenExplorerLink: string
   inflow: {
-    tokenValue: number
-    usdValue: number
+    tokenValue: BigNumber
   }
   outflow: {
-    tokenValue: number
-    usdValue: number
+    tokenValue: BigNumber
   }
   closing: {
-    tokenValue: number
-    usdValue: number
+    tokenValue: BigNumber
   }
 }
 
@@ -174,10 +174,17 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       if (row.original.out > row.original.in) {
         return null
       }
-      const inValue = formatNumber(row.original.in)
-      const usdValue = formatNumber(row.original.usdIn)
       return (
-        <MultiLineCell description={`$ ${usdValue}`} title={String(inValue)} />
+        <TokenCell
+          tokenBalance={{
+            token: {
+              decimals: row.original.tokenDecimals,
+              symbol: row.original.tokenSymbol,
+              tokenAddress: row.original.tokenAddress,
+            },
+            tokenBalance: row.original.in.toString(),
+          }}
+        />
       )
     },
   },
@@ -189,14 +196,42 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       if (row.original.in > row.original.out) {
         return null
       }
-      const outValue = formatNumber(row.original.out)
-      const usdValue = formatNumber(row.original.usdOut)
       return (
-        <MultiLineCell description={`$ ${usdValue}`} title={String(outValue)} />
+        <TokenCell
+          tokenBalance={{
+            token: {
+              decimals: row.original.tokenDecimals,
+              symbol: row.original.tokenSymbol,
+              tokenAddress: row.original.tokenAddress,
+            },
+            tokenBalance: row.original.out.toString(),
+          }}
+        />
       )
     },
   },
 ]
+
+const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({ tokenBalance }) => {
+  const [usdValue, setUsdValue] = useState<string>()
+
+  const fetchUSD = async () => {
+    const usdValue = await convertTokenValueToUSD(tokenBalance)
+    setUsdValue(formatNumber(usdValue))
+  }
+
+  useEffect(() => {
+    fetchUSD()
+  }, [])
+
+  const tokenValue = formatToken(
+    tokenBalance.token.decimals,
+    tokenBalance.tokenBalance
+  )
+  return (
+    <MultiLineCell description={`$ ${usdValue}`} title={String(tokenValue)} />
+  )
+}
 
 const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
   {
@@ -231,12 +266,12 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     // @ts-ignore this is fine
     accessor: 'inflow.tokenValue',
     Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      const tokenValue = formatNumber(row.original.inflow.tokenValue)
-      const usdValue = formatNumber(row.original.inflow.usdValue)
       return (
-        <MultiLineCell
-          description={`$ ${usdValue}`}
-          title={String(tokenValue)}
+        <TokenCell
+          tokenBalance={{
+            token: row.original.token,
+            tokenBalance: row.original.inflow.tokenValue.toString(),
+          }}
         />
       )
     },
@@ -247,12 +282,12 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     // @ts-ignore this is fine
     accessor: 'outflow.tokenValue',
     Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      const tokenValue = formatNumber(row.original.outflow.tokenValue)
-      const usdValue = formatNumber(row.original.outflow.usdValue)
       return (
-        <MultiLineCell
-          description={`$ ${usdValue}`}
-          title={String(tokenValue)}
+        <TokenCell
+          tokenBalance={{
+            token: row.original.token,
+            tokenBalance: row.original.outflow.tokenValue.toString(),
+          }}
         />
       )
     },
@@ -264,12 +299,12 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
     // @ts-ignore this is fine
     accessor: 'closing.tokenValue',
     Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      const tokenValue = formatNumber(row.original.closing.tokenValue)
-      const usdValue = formatNumber(row.original.closing.usdValue)
       return (
-        <MultiLineCell
-          description={`$ ${usdValue}`}
-          title={String(tokenValue)}
+        <TokenCell
+          tokenBalance={{
+            token: row.original.token,
+            tokenBalance: row.original.closing.tokenValue.toString(),
+          }}
         />
       )
     },

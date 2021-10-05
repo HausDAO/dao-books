@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { orderBy, startCase } from 'lodash'
 
 import { TokenBalanceLineItem, VaultTransaction } from '.'
@@ -11,10 +12,9 @@ import {
 } from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
-import {
-  convertTokenToValue,
-  convertTokenValueToUSD,
-} from '../../../utils/methods'
+import CalculateTokenBalances, {
+  CalculatedTokenBalances,
+} from './CalculateTokenBalances'
 
 const GET_MOLOCH = `
 query moloch($contractAddr: String!) {
@@ -67,15 +67,6 @@ type MolochStatsBalancesData = {
   balances: MolochStatsBalance[]
 }
 
-type CalculatedTokenBalances = {
-  [tokenAddress: string]: {
-    in: number
-    out: number
-    usdIn: number
-    usdOut: number
-  }
-}
-
 const retrieveAllBalances = async (daoMeta: DaoMetadata) => {
   const PAGINATE_COUNT = 1000
 
@@ -123,66 +114,14 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
     )
 
     // used to store all the inflow and outflow of each token when iterating over the list of moloch stats
-    const calculatedTokenBalances: CalculatedTokenBalances = {}
-
-    const initTokenBalance = (tokenAddress: string) => {
-      if (!(tokenAddress in calculatedTokenBalances)) {
-        calculatedTokenBalances[tokenAddress] = {
-          out: 0,
-          usdOut: 0,
-          in: 0,
-          usdIn: 0,
-        }
-      }
-    }
-    const incrementInflow = (
-      tokenAddress: string,
-      inValue: number,
-      usdValue: number
-    ) => {
-      initTokenBalance(tokenAddress)
-
-      const tokenStats = calculatedTokenBalances[tokenAddress]
-      calculatedTokenBalances[tokenAddress] = {
-        ...tokenStats,
-        in: tokenStats.in + inValue,
-        usdIn: tokenStats.usdIn + usdValue,
-      }
-    }
-
-    const incrementOutflow = (
-      tokenAddress: string,
-      outValue: number,
-      usdValue: number
-    ) => {
-      initTokenBalance(tokenAddress)
-
-      const tokenStats = calculatedTokenBalances[tokenAddress]
-      calculatedTokenBalances[tokenAddress] = {
-        ...tokenStats,
-        out: tokenStats.out + outValue,
-        usdOut: tokenStats.usdOut + usdValue,
-      }
-    }
+    const calculatedTokenBalances = new CalculateTokenBalances()
 
     const mapMolochStatsToTreasuryTransaction = async (
       molochStatsBalances: MolochStatsBalance[]
     ): Promise<VaultTransaction[]> => {
       const treasuryTransactions = await Promise.all(
         molochStatsBalances.map(async (molochStatBalance) => {
-          const usdValue = await convertTokenValueToUSD({
-            token: {
-              tokenAddress: molochStatBalance.tokenAddress,
-              decimals: molochStatBalance.tokenDecimals,
-              symbol: molochStatBalance.tokenSymbol,
-            },
-            tokenBalance: molochStatBalance.amount,
-          })
-
-          const tokenValue = convertTokenToValue(
-            molochStatBalance.amount,
-            molochStatBalance.tokenDecimals
-          )
+          const tokenValue = BigNumber.from(molochStatBalance.amount)
 
           const balances = (() => {
             if (
@@ -190,26 +129,21 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
               molochStatBalance.tribute === false
             ) {
               return {
-                in: 0,
-                usdIn: 0,
-                out: 0,
-                usdOut: 0,
+                in: BigNumber.from(0),
+                out: BigNumber.from(0),
               }
             }
             if (
               molochStatBalance.payment === false &&
               molochStatBalance.tribute === true
             ) {
-              incrementInflow(
+              calculatedTokenBalances.incrementInflow(
                 molochStatBalance.tokenAddress,
-                tokenValue,
-                usdValue
+                tokenValue
               )
               return {
                 in: tokenValue,
-                usdIn: usdValue,
-                out: 0,
-                usdOut: 0,
+                out: BigNumber.from(0),
               }
             }
 
@@ -217,24 +151,19 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
               molochStatBalance.payment === true &&
               molochStatBalance.tribute === false
             ) {
-              incrementOutflow(
+              calculatedTokenBalances.incrementOutflow(
                 molochStatBalance.tokenAddress,
-                tokenValue,
-                usdValue
+                tokenValue
               )
               return {
-                in: 0,
-                usdIn: 0,
+                in: BigNumber.from(0),
                 out: tokenValue,
-                usdOut: usdValue,
               }
             }
 
             return {
-              in: 0,
-              usdIn: 0,
-              out: 0,
-              usdOut: 0,
+              in: BigNumber.from(0),
+              out: BigNumber.from(0),
             }
           })()
 
@@ -263,13 +192,7 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
     ): Promise<TokenBalanceLineItem[]> => {
       const tokenBalanceLineItems = await Promise.all(
         molochTokenBalances.map(async (molochTokenBalance) => {
-          const usdValue = await convertTokenValueToUSD(molochTokenBalance)
-
-          const tokenValue = convertTokenToValue(
-            molochTokenBalance.tokenBalance,
-            molochTokenBalance.token.decimals
-          )
-
+          const tokenValue = BigNumber.from(molochTokenBalance.tokenBalance)
           const tokenExplorerLink = getTokenExplorerLink(
             daoMeta.network,
             molochTokenBalance.token.tokenAddress
@@ -281,22 +204,15 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             inflow: {
               tokenValue:
                 calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-                  ?.in || 0,
-              usdValue:
-                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-                  ?.usdIn || 0,
+                  ?.in || BigNumber.from(0),
             },
             outflow: {
               tokenValue:
                 calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-                  ?.out || 0,
-              usdValue:
-                calculatedTokenBalances[molochTokenBalance.token.tokenAddress]
-                  ?.usdOut || 0,
+                  ?.out || BigNumber.from(0),
             },
             closing: {
               tokenValue,
-              usdValue,
             },
           }
         })
@@ -310,16 +226,17 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
 
     const tokenBalances = await mapMolochTokenBalancesToTokenBalanceLineItem(
       moloch.data.moloch.tokenBalances,
-      calculatedTokenBalances
+      calculatedTokenBalances.getBalances()
     )
 
     const combinedFlows = { inflow: 0, outflow: 0, closing: 0 }
 
-    tokenBalances.forEach((tokenBalance) => {
-      combinedFlows.inflow += tokenBalance.inflow.usdValue
-      combinedFlows.outflow += tokenBalance.outflow.usdValue
-      combinedFlows.closing += tokenBalance.closing.usdValue
-    })
+    // TODO: Figure it out later
+    // tokenBalances.forEach((tokenBalance) => {
+    //   combinedFlows.inflow += tokenBalance.inflow.usdValue
+    //   combinedFlows.outflow += tokenBalance.outflow.usdValue
+    //   combinedFlows.closing += tokenBalance.closing.usdValue
+    // })
 
     return {
       daoMetadata: daoMeta,
