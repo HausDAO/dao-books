@@ -18,7 +18,7 @@ export const getMinions = async (
         minionAddress: cachedMinion.address,
         name: cachedMinion.name,
         tokenBalances: cachedMinion.erc20s.map((erc20) => ({
-          tokenBalance: Number(erc20.tokenBalance),
+          tokenBalance: erc20.tokenBalance,
           token: {
             tokenAddress: erc20.tokenAddress,
             decimals: erc20.decimals,

@@ -6,7 +6,7 @@ export type Token = {
 
 export type TokenBalance = {
   token: Token
-  tokenBalance: number
+  tokenBalance: string
 }
 
 export type Minion = {
@@ -37,16 +37,16 @@ export type Moloch = {
 export type MolochStatsBalance = {
   id: string
   timestamp: string
-  balance: number
+  balance: string
   tokenSymbol: string
   tokenAddress: string
   tokenDecimals: string
   transactionHash: string
-  amount: number
+  amount: string
   payment: boolean
   tribute: boolean
-  currentShares: number
-  currentLoot: number
+  currentShares: string
+  currentLoot: string
   action: string
 }
 
