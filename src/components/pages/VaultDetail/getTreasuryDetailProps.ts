@@ -9,7 +9,7 @@ import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
 import {
   getTokenExplorerLink,
   getTxExplorerLink,
-} from '../../../utils/dataPresentationHelper'
+} from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
 import CalculateTokenBalances, {

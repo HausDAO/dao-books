@@ -10,10 +10,7 @@ import CalculateTokenBalances, {
 import { getDAOMetadata } from '@/services/getDAOMetadata'
 import { cacheTokenPrices } from '@/services/getTokenUSDPrice'
 import { MinionTransaction, TokenBalance } from '@/types/DAO'
-import {
-  getTokenExplorerLink,
-  getTxExplorerLink,
-} from '@/utils/dataPresentationHelper'
+import { getTokenExplorerLink, getTxExplorerLink } from '@/utils/explorer'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getMinionDetailProps = async (

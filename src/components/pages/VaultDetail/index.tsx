@@ -17,7 +17,7 @@ import TokenCell from './tokenCell'
 
 import { Error } from '@/components/Error'
 import { H1, H2, Button } from '@/components/atoms'
-import { formatAddress } from '@/utils/dataPresentationHelper'
+import { formatAddress } from '@/utils/methods'
 // Making this client side because chart.js cannot render on server side
 
 export const VaultDetail = (): JSX.Element => {
