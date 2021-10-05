@@ -23,6 +23,7 @@ export const getMinionDetailProps = async (
   // FIXME: A hack to cache token prices before we fetch prices for all tokens in parallel
   await cacheTokenPrices()
 
+
   try {
     const daoMeta = await getDAOMetadata(daoAddress as string)
     const cachedMinions = await getMinions(daoAddress as string)
