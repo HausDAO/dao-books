@@ -21,6 +21,9 @@ export type MinionTransaction = {
   tokenSymbol: string
   timestamp: string
   deposit: boolean
+  transactionHash: string
+  from: string
+  to: string
 }
 
 export type MinionWithTokenBalances = Minion & {
