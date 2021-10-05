@@ -1,25 +1,23 @@
+import { useClipboard } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import moment from 'moment'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { useParams } from 'react-router'
 import { Cell, Column } from 'react-table'
 
 import { TokenBalance } from '../../../types/DAO'
-import {
-  convertTokenValueToUSD,
-  formatNumber,
-  formatToken,
-} from '../../../utils/methods'
 import { BalanceCard } from '../../BalanceCard'
-import { MultiLineCell, SelectColumnFilter } from '../../table'
+import { SelectColumnFilter } from '../../table'
 import { DateRangeFilter, filterByDate } from '../../table/DateRangeFilter'
 import Table from '../../table/Table'
 import { getMinionDetailProps } from './getMinionDetailProps'
 import { getTreasuryDetailProps } from './getTreasuryDetailProps'
+import TokenCell from './tokenCell'
 
 import { Error } from '@/components/Error'
-import { H1, H2 } from '@/components/atoms'
+import { H1, H2, Button } from '@/components/atoms'
+import { formatAddress } from '@/utils/methods'
 // Making this client side because chart.js cannot render on server side
 
 export const VaultDetail = (): JSX.Element => {
@@ -110,6 +108,7 @@ export type VaultTransaction = {
   tokenAddress: string
   in: BigNumber
   out: BigNumber
+  counterPartyAddress: string
 }
 
 export type TokenBalanceLineItem = TokenBalance & {
@@ -210,28 +209,25 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
       )
     },
   },
+  {
+    Header: 'Counter Party Address',
+    Footer: 'Counter Party Address',
+    accessor: 'counterPartyAddress',
+    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
+      const { hasCopied, onCopy } = useClipboard(value)
+      const counterPartyShortAddress = formatAddress(value, null)
+
+      return (
+        <div className="flex rounded-md shadow flex-row  justify-between p-4 w-80 space-y-2">
+          <div>{counterPartyShortAddress}</div>
+          <Button onClick={onCopy} size="xs">
+            {hasCopied ? 'Address Copied' : 'Copy Address'}
+          </Button>
+        </div>
+      )
+    },
+  },
 ]
-
-const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({ tokenBalance }) => {
-  const [usdValue, setUsdValue] = useState<string>()
-
-  const fetchUSD = async () => {
-    const usdValue = await convertTokenValueToUSD(tokenBalance)
-    setUsdValue(formatNumber(usdValue))
-  }
-
-  useEffect(() => {
-    fetchUSD()
-  }, [])
-
-  const tokenValue = formatToken(
-    tokenBalance.token.decimals,
-    tokenBalance.tokenBalance
-  )
-  return (
-    <MultiLineCell description={`$ ${usdValue}`} title={String(tokenValue)} />
-  )
-}
 
 const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
   {

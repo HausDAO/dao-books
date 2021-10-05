@@ -10,7 +10,7 @@ import CalculateTokenBalances, {
 import { getDAOMetadata } from '@/services/getDAOMetadata'
 import { cacheTokenPrices } from '@/services/getTokenUSDPrice'
 import { MinionTransaction, TokenBalance } from '@/types/DAO'
-import { getTokenExplorerLink } from '@/utils/explorer'
+import { getTokenExplorerLink, getTxExplorerLink } from '@/utils/explorer'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getMinionDetailProps = async (
@@ -74,13 +74,14 @@ export const getMinionDetailProps = async (
             }
           })()
 
-          // const txExplorerLink = getTxExplorerLink(
-          //   daoMeta.network,
-          //   minionTransaction.id
-          // )
+          const txExplorerLink = getTxExplorerLink(
+            daoMeta.network,
+            minionTransaction.transactionHash
+          )
 
-          // TODO: To be implemented later
-          const txExplorerLink = '#'
+          const counterPartyOrigin = minionTransaction.deposit
+            ? minionTransaction.from
+            : minionTransaction.to
 
           return {
             date: minionTransaction.timestamp,
@@ -89,6 +90,7 @@ export const getMinionDetailProps = async (
             tokenDecimals: minionTransaction.tokenDecimals,
             tokenAddress: minionTransaction.tokenAddress,
             txExplorerLink,
+            counterPartyAddress: counterPartyOrigin,
             ...balances,
           }
         })
