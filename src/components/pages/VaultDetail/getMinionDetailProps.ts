@@ -74,13 +74,10 @@ export const getMinionDetailProps = async (
             }
           })()
 
-          // const txExplorerLink = getTxExplorerLink(
-          //   daoMeta.network,
-          //   minionTransaction.id
-          // )
-
-          // TODO: To be implemented later
-          const txExplorerLink = '#'
+          const txExplorerLink = getTxExplorerLink(
+            daoMeta.network,
+            minionTransaction.transactionHash
+          )
 
           return {
             date: minionTransaction.timestamp,
