@@ -2,7 +2,7 @@ import { useClipboard } from '@chakra-ui/react'
 import { BigNumber } from '@ethersproject/bignumber'
 import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
-import { HiOutlineExternalLink } from 'react-icons/hi'
+import { HiOutlineExternalLink, HiOutlineClipboardCopy } from 'react-icons/hi'
 import { useParams } from 'react-router'
 import { Cell, Column } from 'react-table'
 
@@ -16,7 +16,7 @@ import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 import TokenCell from './tokenCell'
 
 import { Error } from '@/components/Error'
-import { H1, H2, Button } from '@/components/atoms'
+import { H1, H2 } from '@/components/atoms'
 import { formatAddress } from '@/utils/methods'
 // Making this client side because chart.js cannot render on server side
 
@@ -210,19 +210,30 @@ const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
     },
   },
   {
-    Header: 'Counter Party Address',
-    Footer: 'Counter Party Address',
+    Header: 'Counter Party',
+    Footer: 'Counter Party',
     accessor: 'counterPartyAddress',
     Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
       const { hasCopied, onCopy } = useClipboard(value)
       const counterPartyShortAddress = formatAddress(value, null)
 
       return (
-        <div className="flex rounded-md shadow flex-row  justify-between p-4 w-80 space-y-2">
-          <div>{counterPartyShortAddress}</div>
-          <Button onClick={onCopy} size="xs">
-            {hasCopied ? 'Address Copied' : 'Copy Address'}
-          </Button>
+        <div className="flex justify-items-start">
+          <div className="flex rounded-md shadow flex-col  p-4 w-50 space-y-2">
+            <div className="flex justify-center" title={value}>
+              {counterPartyShortAddress}
+              &nbsp;&nbsp;
+              {!hasCopied && (
+                <HiOutlineClipboardCopy
+                  onClick={onCopy}
+                  className="w-4 h-4 cursor-pointer"
+                />
+              )}
+              {hasCopied && (
+                <HiOutlineClipboardCopy className="w-5 h-5 cursor-pointer" />
+              )}
+            </div>
+          </div>
         </div>
       )
     },
