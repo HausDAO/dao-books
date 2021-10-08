@@ -21,10 +21,46 @@ import { formatAddress } from '@/utils/methods'
 // Making this client side because chart.js cannot render on server side
 
 export const VaultDetail = (): JSX.Element => {
-  const transactionsColumns = useMemo(() => TRANSACTIONS_COLUMNS, [])
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
   const { daoAddress, minionAddress } =
     useParams<{ daoAddress: string; minionAddress?: string }>()
+
+  const transactionsColumns = useMemo(() => {
+    if (minionAddress) {
+      return TRANSACTIONS_COLUMNS
+    } else {
+      return [
+        ...TRANSACTIONS_COLUMNS,
+        {
+          Header: 'Shares',
+          Footer: 'Shares',
+          accessor: 'currentShares',
+          disableSortBy: true,
+          Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
+            const {
+              original: { currentLoot, currentShares },
+            } = row
+
+            return (
+              <div
+                key={`shares-${row.id}`}
+                className="flex rounded-md shadow flex-col p-4 w-80 space-y-2"
+              >
+                <div>Loot: {currentLoot}</div>
+                <div>Shares: {currentShares}</div>
+              </div>
+            )
+          },
+        },
+        {
+          Header: 'Loot',
+          Footer: 'Loot',
+          accessor: 'currentLoot',
+          disableSortBy: true,
+        },
+      ]
+    }
+  }, [])
 
   const [props, setProps] = useState<any>({})
   const updateProps = async () => {
@@ -81,6 +117,7 @@ export const VaultDetail = (): JSX.Element => {
           data={transactions || []}
           initialState={{
             pageSize: 20,
+            hiddenColumns: ['currentLoot'],
           }}
         />
       </div>
@@ -109,6 +146,8 @@ export type VaultTransaction = {
   in: BigNumber
   out: BigNumber
   counterPartyAddress: string
+  currentLoot: string
+  currentShares: string
 }
 
 export type TokenBalanceLineItem = TokenBalance & {
@@ -299,7 +338,6 @@ const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
       )
     },
   },
-
   {
     Header: 'Balance',
     Footer: 'Balance',
