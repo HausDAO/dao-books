@@ -57,6 +57,7 @@ query MolochBalances($molochAddress: String!, $first: Int, $skip: Int) {
     payment
     tribute
     amount
+    #counterpartyAddress
   }
 }
 `
@@ -178,7 +179,10 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             tokenSymbol: molochStatBalance.tokenSymbol,
             tokenDecimals: molochStatBalance.tokenDecimals,
             tokenAddress: molochStatBalance.tokenAddress,
+            currentLoot: molochStatBalance.currentLoot,
+            currentShares: molochStatBalance.currentShares,
             txExplorerLink,
+            counterPartyAddress: '', // molochStatBalance.counterpartyAddress,
             ...balances,
           }
         })
