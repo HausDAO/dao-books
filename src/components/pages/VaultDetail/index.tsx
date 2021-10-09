@@ -1,23 +1,20 @@
-import { useClipboard } from '@chakra-ui/react'
-import { BigNumber } from '@ethersproject/bignumber'
-import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
-import { HiOutlineExternalLink, HiOutlineClipboardCopy } from 'react-icons/hi'
 import { useParams } from 'react-router'
-import { Cell, Column } from 'react-table'
 
-import { TokenBalance } from '../../../types/DAO'
-import { BalanceCard } from '../../BalanceCard'
-import { SelectColumnFilter } from '../../table'
-import { DateRangeFilter, filterByDate } from '../../table/DateRangeFilter'
 import Table from '../../table/Table'
+import { BalanceCard } from './BalanceCard'
+import {
+  MINION_COLUMNS,
+  TOKEN_BALANCES_COLUMNS,
+  TRANSACTIONS_COLUMNS,
+  TREASURY_COLUMNS,
+} from './columns'
 import { getMinionDetailProps } from './getMinionDetailProps'
 import { getTreasuryDetailProps } from './getTreasuryDetailProps'
-import TokenCell from './tokenCell'
 
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
-import { formatAddress } from '@/utils/methods'
+
 // Making this client side because chart.js cannot render on server side
 
 export const VaultDetail = (): JSX.Element => {
@@ -27,38 +24,9 @@ export const VaultDetail = (): JSX.Element => {
 
   const transactionsColumns = useMemo(() => {
     if (minionAddress) {
-      return TRANSACTIONS_COLUMNS
+      return TRANSACTIONS_COLUMNS.concat(MINION_COLUMNS)
     } else {
-      return [
-        ...TRANSACTIONS_COLUMNS,
-        {
-          Header: 'Shares',
-          Footer: 'Shares',
-          accessor: 'currentShares',
-          disableSortBy: true,
-          Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
-            const {
-              original: { currentLoot, currentShares },
-            } = row
-
-            return (
-              <div
-                key={`shares-${row.id}`}
-                className="flex rounded-md shadow flex-col p-4 w-80 space-y-2"
-              >
-                <div>Loot: {currentLoot}</div>
-                <div>Shares: {currentShares}</div>
-              </div>
-            )
-          },
-        },
-        {
-          Header: 'Loot',
-          Footer: 'Loot',
-          accessor: 'currentLoot',
-          disableSortBy: true,
-        },
-      ]
+      return TRANSACTIONS_COLUMNS.concat(TREASURY_COLUMNS)
     }
   }, [])
 
@@ -75,14 +43,7 @@ export const VaultDetail = (): JSX.Element => {
     updateProps()
   }, [])
 
-  const {
-    daoMetadata,
-    transactions,
-    tokenBalances,
-    combinedFlows,
-    vaultName,
-    error,
-  } = props
+  const { daoMetadata, transactions, tokenBalances, vaultName, error } = props
 
   if (!daoMetadata && !error) {
     return <>Loading</>
@@ -104,9 +65,21 @@ export const VaultDetail = (): JSX.Element => {
         </H1>
       </div>
       <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
-        <BalanceCard title="Inflow" balance={combinedFlows?.inflow} />
-        <BalanceCard title="Outflow" balance={combinedFlows?.outflow} />
-        <BalanceCard title="Closing" balance={combinedFlows?.closing} />
+        <BalanceCard
+          title="Inflow"
+          tokenBalances={tokenBalances}
+          type="inflow"
+        />
+        <BalanceCard
+          title="Outflow"
+          tokenBalances={tokenBalances}
+          type="outflow"
+        />
+        <BalanceCard
+          title="Closing"
+          tokenBalances={tokenBalances}
+          type="closing"
+        />
       </div>
 
       <div className="space-y-2">
@@ -135,223 +108,3 @@ export const VaultDetail = (): JSX.Element => {
     </div>
   )
 }
-
-export type VaultTransaction = {
-  date: string | Date
-  txExplorerLink: string
-  type: string
-  tokenSymbol: string
-  tokenDecimals: string
-  tokenAddress: string
-  in: BigNumber
-  out: BigNumber
-  counterPartyAddress: string
-  currentLoot: string
-  currentShares: string
-}
-
-export type TokenBalanceLineItem = TokenBalance & {
-  tokenExplorerLink: string
-  inflow: {
-    tokenValue: BigNumber
-  }
-  outflow: {
-    tokenValue: BigNumber
-  }
-  closing: {
-    tokenValue: BigNumber
-  }
-}
-
-const TRANSACTIONS_COLUMNS: Column<VaultTransaction>[] = [
-  {
-    Header: 'Date',
-    Footer: 'Date',
-    accessor: 'date',
-    Filter: DateRangeFilter,
-    filter: filterByDate,
-    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
-      const date = moment.unix(value).format('DD-MMM-YYYY HH:mm:ss')
-      const txExplorerLink = row.original.txExplorerLink
-      return (
-        <div className="flex rounded-md shadow flex-col p-4 w-80 space-y-2">
-          <div>{date}</div>
-          <a
-            href={txExplorerLink}
-            className="text-xs hover:underline flex items-center"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View Tx
-            <HiOutlineExternalLink className="inline ml-1" />
-          </a>
-        </div>
-      )
-    },
-  },
-
-  {
-    Header: 'Type',
-    Footer: 'Type',
-    accessor: 'type',
-    Filter: SelectColumnFilter,
-    filter: 'includes',
-  },
-  {
-    Header: 'Token',
-    Footer: 'Token',
-    accessor: 'tokenSymbol',
-    Filter: SelectColumnFilter,
-    filter: 'includes',
-  },
-  {
-    Header: 'In',
-    Footer: 'In',
-    accessor: 'in',
-    Cell: ({ row }: Cell<VaultTransaction>) => {
-      if (row.original.out > row.original.in) {
-        return null
-      }
-      return (
-        <TokenCell
-          tokenBalance={{
-            token: {
-              decimals: row.original.tokenDecimals,
-              symbol: row.original.tokenSymbol,
-              tokenAddress: row.original.tokenAddress,
-            },
-            tokenBalance: row.original.in.toString(),
-          }}
-        />
-      )
-    },
-  },
-  {
-    Header: 'Out',
-    Footer: 'Out',
-    accessor: 'out',
-    Cell: ({ row }: Cell<VaultTransaction>) => {
-      if (row.original.in > row.original.out) {
-        return null
-      }
-      return (
-        <TokenCell
-          tokenBalance={{
-            token: {
-              decimals: row.original.tokenDecimals,
-              symbol: row.original.tokenSymbol,
-              tokenAddress: row.original.tokenAddress,
-            },
-            tokenBalance: row.original.out.toString(),
-          }}
-        />
-      )
-    },
-  },
-  {
-    Header: 'Counter Party',
-    Footer: 'Counter Party',
-    accessor: 'counterPartyAddress',
-    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
-      const { hasCopied, onCopy } = useClipboard(value)
-      const counterPartyShortAddress = formatAddress(value, null)
-
-      return (
-        <div className="flex justify-items-start">
-          <div className="flex rounded-md shadow flex-col  p-4 w-50 space-y-2">
-            <div className="flex justify-center" title={value}>
-              {counterPartyShortAddress}
-              &nbsp;&nbsp;
-              {!hasCopied && (
-                <HiOutlineClipboardCopy
-                  onClick={onCopy}
-                  className="w-4 h-4 cursor-pointer"
-                />
-              )}
-              {hasCopied && (
-                <HiOutlineClipboardCopy className="w-5 h-5 cursor-pointer" />
-              )}
-            </div>
-          </div>
-        </div>
-      )
-    },
-  },
-]
-
-const TOKEN_BALANCES_COLUMNS: Column<TokenBalanceLineItem>[] = [
-  {
-    Header: 'Token',
-    Footer: 'Token',
-    // @ts-ignore this is fine
-    accessor: 'token.symbol',
-    Filter: SelectColumnFilter,
-    width: 500,
-    filter: 'includes',
-    Cell: ({ value, row }: Cell<TokenBalanceLineItem>) => {
-      const tokenExplorerLink = row.original.tokenExplorerLink
-      return (
-        <div className="flex flex-col space-y-2 p-4">
-          <div>{value}</div>
-          <a
-            href={tokenExplorerLink}
-            className="text-xs hover:underline flex items-center min-w-max"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View Contract
-            <HiOutlineExternalLink className="inline ml-1" />
-          </a>
-        </div>
-      )
-    },
-  },
-  {
-    Header: 'Inflow',
-    Footer: 'Inflow',
-    // @ts-ignore this is fine
-    accessor: 'inflow.tokenValue',
-    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      return (
-        <TokenCell
-          tokenBalance={{
-            token: row.original.token,
-            tokenBalance: row.original.inflow.tokenValue.toString(),
-          }}
-        />
-      )
-    },
-  },
-  {
-    Header: 'Outflow',
-    Footer: 'Outflow',
-    // @ts-ignore this is fine
-    accessor: 'outflow.tokenValue',
-    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      return (
-        <TokenCell
-          tokenBalance={{
-            token: row.original.token,
-            tokenBalance: row.original.outflow.tokenValue.toString(),
-          }}
-        />
-      )
-    },
-  },
-  {
-    Header: 'Balance',
-    Footer: 'Balance',
-    // @ts-ignore this is fine
-    accessor: 'closing.tokenValue',
-    Cell: ({ row }: Cell<TokenBalanceLineItem>) => {
-      return (
-        <TokenCell
-          tokenBalance={{
-            token: row.original.token,
-            tokenBalance: row.original.closing.tokenValue.toString(),
-          }}
-        />
-      )
-    },
-  },
-]

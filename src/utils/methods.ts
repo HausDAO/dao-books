@@ -65,7 +65,12 @@ export const formatToken = (
     return
   }
   const num = BigNumber.from(number)
-  return formatUnits(num, Number(decimals))
+  const formatted = formatUnits(num, Number(decimals))
+  const split = formatted.split('.')
+  if (split.length > 1) {
+    return split[0] + '.' + split[1].substr(0, 6)
+  }
+  return formatted
 }
 
 export const convertTokenToValue = (
@@ -88,7 +93,7 @@ export const getTokenImage = (token: Token): string => {
 export const formatAddress = (
   address: string | null | undefined,
   ensName: string | null | undefined,
-  chars = 4
+  chars = 6
 ): string => {
   if (ensName) return ensName
   else if (address)

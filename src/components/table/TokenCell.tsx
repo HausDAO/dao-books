@@ -1,14 +1,16 @@
 import { FC, useEffect, useState } from 'react'
 
-import { TokenBalance } from '../../../types/DAO'
+import { MultiLineCell } from '.'
+import { TokenBalance } from '../../types/DAO'
 import {
   convertTokenValueToUSD,
   formatNumber,
   formatToken,
-} from '../../../utils/methods'
-import { MultiLineCell } from '../../table'
+} from '../../utils/methods'
 
-const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({ tokenBalance }) => {
+export const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({
+  tokenBalance,
+}) => {
   const [usdValue, setUsdValue] = useState<string>()
 
   const fetchUSD = async () => {
@@ -25,8 +27,6 @@ const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({ tokenBalance }) => {
     tokenBalance.tokenBalance
   )
   return (
-    <MultiLineCell description={`$ ${usdValue}`} title={String(tokenValue)} />
+    <MultiLineCell description={`$${usdValue}`} title={String(tokenValue)} />
   )
 }
-
-export default TokenCell
