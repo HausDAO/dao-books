@@ -1,8 +1,4 @@
-const EXPLORER_MAP: { [network: string]: string } = {
-  xdai: 'https://blockscout.com/xdai/mainnet',
-  matic: 'https://polygonscan.com',
-  mainnet: 'https://etherscan.io',
-}
+import { EXPLORER_MAP } from './constants'
 
 export const getTokenExplorerLink = (
   network: string,

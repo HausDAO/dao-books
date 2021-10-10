@@ -90,7 +90,7 @@ export const getMinionDetailProps = async (
             tokenDecimals: minionTransaction.tokenDecimals,
             tokenAddress: minionTransaction.tokenAddress,
             txExplorerLink,
-            counterPartyAddress: counterPartyOrigin,
+            counterparty: counterPartyOrigin,
             ...balances,
           }
         })
@@ -142,24 +142,14 @@ export const getMinionDetailProps = async (
       calculatedTokenBalances.getBalances()
     )
 
-    const combinedFlows = { inflow: 0, outflow: 0, closing: 0 }
-
-    // TODO: Figure it out later
-    // tokenBalances.forEach((tokenBalance) => {
-    //   combinedFlows.inflow += tokenBalance.inflow.usdValue
-    //   combinedFlows.outflow += tokenBalance.outflow.usdValue
-    //   combinedFlows.closing += tokenBalance.closing.usdValue
-    // })
-
     return {
       daoMetadata: daoMeta,
-      transactions: minionTransactions,
+      transactions: orderBy(minionTransactions, 'date', 'desc'),
       tokenBalances: orderBy(
         tokenBalances,
         ['closing.usdValue', 'closing.tokenValue'],
         ['desc', 'desc']
       ),
-      combinedFlows,
       vaultName: minion.name,
     }
   } catch (error) {

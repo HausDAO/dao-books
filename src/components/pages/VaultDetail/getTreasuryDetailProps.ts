@@ -12,6 +12,7 @@ import {
 } from '../../../utils/explorer'
 import fetchGraph from '../../../utils/fetchGraph'
 import fetchStatsGraph from '../../../utils/fetchStatsGraph'
+import { getProposalLink } from '../../../utils/proposal'
 import CalculateTokenBalances, {
   CalculatedTokenBalances,
 } from './CalculateTokenBalances'
@@ -42,7 +43,7 @@ query MolochBalances($molochAddress: String!, $first: Int, $skip: Int) {
     skip: $skip,
     where: {molochAddress: $molochAddress, action_not: "summon"}
     orderBy: timestamp
-    orderDirection: desc
+    orderDirection: asc
   ) {
     id
     timestamp
@@ -51,13 +52,15 @@ query MolochBalances($molochAddress: String!, $first: Int, $skip: Int) {
     tokenAddress
     transactionHash
     tokenDecimals
-    currentShares
-    currentLoot
     action
     payment
     tribute
     amount
-    #counterpartyAddress
+    proposalDetail {
+      proposalId
+      applicant
+      details
+    }
   }
 }
 `
@@ -122,7 +125,15 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
     ): Promise<VaultTransaction[]> => {
       const treasuryTransactions = await Promise.all(
         molochStatsBalances.map(async (molochStatBalance) => {
-          const tokenValue = BigNumber.from(molochStatBalance.amount)
+          /**
+           * molochStatBalance.amount is incorrect because ragequit does not return the correct amount
+           * so instead, we track the previous balance of the token in the calculatedTokenBalances class state
+           * and subtract from current balance to get the amount.
+           */
+          const tokenValue = calculatedTokenBalances
+            .getBalance(molochStatBalance.tokenAddress)
+            .sub(BigNumber.from(molochStatBalance.balance))
+            .abs()
 
           const balances = (() => {
             if (
@@ -173,16 +184,39 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             molochStatBalance.transactionHash
           )
 
+          const proposalTitle = (() => {
+            try {
+              return JSON.parse(
+                molochStatBalance.proposalDetail?.details ?? '{}'
+              ).title
+            } catch (error) {
+              return ''
+            }
+          })()
+
+          const proposalLink = getProposalLink({
+            network: daoMeta.network,
+            daoAddress,
+            proposalId: molochStatBalance.proposalDetail?.proposalId,
+          })
+
           return {
             date: molochStatBalance.timestamp,
             type: startCase(molochStatBalance.action),
             tokenSymbol: molochStatBalance.tokenSymbol,
             tokenDecimals: molochStatBalance.tokenDecimals,
             tokenAddress: molochStatBalance.tokenAddress,
-            currentLoot: molochStatBalance.currentLoot,
-            currentShares: molochStatBalance.currentShares,
             txExplorerLink,
-            counterPartyAddress: '', // molochStatBalance.counterpartyAddress,
+            counterparty: molochStatBalance.counterpartyAddress,
+            proposal: {
+              id: molochStatBalance.proposalDetail?.proposalId ?? '',
+              link: proposalLink,
+              shares: '0', // TBD
+              loot: '0', // TBD
+              applicant: molochStatBalance.proposalDetail?.applicant ?? '',
+              recipient: '', // TBD
+              title: proposalTitle,
+            },
             ...balances,
           }
         })
@@ -233,24 +267,14 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
       calculatedTokenBalances.getBalances()
     )
 
-    const combinedFlows = { inflow: 0, outflow: 0, closing: 0 }
-
-    // TODO: Figure it out later
-    // tokenBalances.forEach((tokenBalance) => {
-    //   combinedFlows.inflow += tokenBalance.inflow.usdValue
-    //   combinedFlows.outflow += tokenBalance.outflow.usdValue
-    //   combinedFlows.closing += tokenBalance.closing.usdValue
-    // })
-
     return {
       daoMetadata: daoMeta,
-      transactions: treasuryTransactions,
+      transactions: orderBy(treasuryTransactions, 'date', 'desc'),
       tokenBalances: orderBy(
         tokenBalances,
         ['closing.usdValue', 'closing.tokenValue'],
         ['desc', 'desc']
       ),
-      combinedFlows,
       vaultName: 'DAO Treasury',
     }
   } catch (error) {

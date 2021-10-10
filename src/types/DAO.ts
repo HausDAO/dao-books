@@ -48,9 +48,13 @@ export type MolochStatsBalance = {
   amount: string
   payment: boolean
   tribute: boolean
-  currentShares: string
-  currentLoot: string
+  counterpartyAddress: string
   action: string
+  proposalDetail: {
+    proposalId: string
+    applicant: string
+    details: string | null
+  } | null
 }
 
 export type CachedMinion = {
