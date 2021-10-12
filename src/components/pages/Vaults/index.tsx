@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/button'
 import { useEffect, useState } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 
@@ -7,7 +8,7 @@ import { VaultCard } from '../../VaultCard'
 import { getVaultsProps } from './getVaultsProps'
 
 import { Error } from '@/components/Error'
-import { H1, Button, H2 } from '@/components/atoms'
+import { H1, H2 } from '@/components/atoms'
 
 export const Vaults = (): JSX.Element => {
   const history = useHistory()

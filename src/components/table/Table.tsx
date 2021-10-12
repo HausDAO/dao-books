@@ -4,6 +4,7 @@ import {
   InputGroup,
   InputLeftElement,
   Select,
+  Button,
 } from '@chakra-ui/react'
 import { Menu, Transition } from '@headlessui/react'
 import { merge } from 'lodash'
@@ -33,7 +34,6 @@ import {
 // @ts-ignore
 import { useExportData } from 'react-table-plugins'
 
-import { Button } from '@/components/atoms'
 import { classNames } from '@/utils/methods'
 
 // @ts-ignore

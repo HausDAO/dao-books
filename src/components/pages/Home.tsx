@@ -1,17 +1,16 @@
+import { Button } from '@chakra-ui/button'
 import {
   FormControl,
-  Input,
-  FormLabel,
   FormErrorMessage,
   FormHelperText,
-} from '@chakra-ui/react'
+} from '@chakra-ui/form-control'
+import { Input } from '@chakra-ui/input'
+import { Box, Heading, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
-import { Link } from 'react-router-dom'
 
-import { Card } from '../Card'
-import { H1, H2, Button } from '../atoms'
+import { DAOCard } from '../DAOCard'
 
 const POPULAR_DAOS = [
   {
@@ -58,13 +57,19 @@ export const Home: FC = () => {
     history.push(`/dao/${data.address}`)
   }
   return (
-    <div className="space-y-8 p-4">
-      <div className="space-y-4">
-        <H1>DAO Bookkeeping</H1>
-        <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
-          <FormControl id="address" isRequired>
-            <FormLabel htmlFor="address">Enter DAO Address</FormLabel>
-            <Input id="address" {...register('address', { required: true })} />
+    <Stack spacing="8">
+      <Box>
+        <Heading variant="h1" as="h1" mb="4">
+          Explore DAO Books
+        </Heading>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl w="3xl" id="address" mb="3" isRequired>
+            <Input
+              placeholder="Enter DAO Address"
+              id="address"
+              {...register('address', { required: true })}
+            />
             <FormHelperText>
               You can find the DAO address from the URL of the DAO page on
               app.daohaus.club.
@@ -73,39 +78,40 @@ export const Home: FC = () => {
           </FormControl>
           <Button
             type="submit"
+            variant="outline"
             isLoading={isSubmitting}
             disabled={isSubmitting}
             loadingText="Loading"
           >
-            View Vaults
+            View Books
           </Button>
         </form>
-      </div>
-      <div className="space-y-4">
-        <H2>Popular DAOs</H2>
-        <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
+      </Box>
+      <Stack spacing="4">
+        <Heading variant="h1">Popular DAOs</Heading>
+        <Wrap spacing="6">
           {POPULAR_DAOS.map((dao) => {
             return (
-              <Link
-                className="inline-flex"
-                key={dao.address}
-                to={`/dao/${dao.address}`}
-              >
-                <Card title={dao.name} description={dao.description} />
-              </Link>
+              <WrapItem>
+                <DAOCard dao={dao} />
+              </WrapItem>
             )
           })}
-        </div>
+        </Wrap>
         <a
           href="https://app.daohaus.club/explore"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <p className="font-bold pt-4 hover:underline">
+          <Text
+            _hover={{
+              textDecoration: 'underline',
+            }}
+          >
             Explore All DAOs &rarr;
-          </p>
+          </Text>
         </a>
-      </div>
-    </div>
+      </Stack>
+    </Stack>
   )
 }
