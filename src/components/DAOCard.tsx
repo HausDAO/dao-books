@@ -1,23 +1,16 @@
 import { Avatar } from '@chakra-ui/avatar'
 import { Button } from '@chakra-ui/button'
-import { Image } from '@chakra-ui/image'
-import {
-  Box,
-  Flex,
-  Heading,
-  HStack,
-  Spacer,
-  Stack,
-  Text,
-  Wrap,
-} from '@chakra-ui/layout'
+import { Box, Flex, Stack, Text } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
+
+import { getImageFromIPFSHash } from '../utils/web3'
 type DAOCardProps = {
   dao: {
     name: string
     address: string
     description: string
+    avatar: string
   }
 }
 
@@ -35,10 +28,10 @@ export const DAOCard: FC<DAOCardProps> = ({ dao }) => {
     >
       <Box>
         <Stack spacing="4">
-          <HStack spacing="4">
-            <Avatar w="12" src="https://bit.ly/dan-abramov" />
-            <Text fontSize="2xl">{dao.name}</Text>
-          </HStack>
+          <Flex alignItems="center">
+            <Avatar w="12" src={getImageFromIPFSHash(dao.avatar)} mr="4" />
+            <Text fontSize="xl">{dao.name}</Text>
+          </Flex>
           <Text>{dao.description}</Text>
         </Stack>
       </Box>

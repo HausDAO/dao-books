@@ -3,6 +3,7 @@ import { useEffect, useState, FC } from 'react'
 import { TokenBalance } from '../types/DAO'
 import { convertTokenValueToUSD, formatNumber } from '../utils/methods'
 type VaultCardProps = {
+  type: string
   address: string
   name: string
   tokenBalances: TokenBalance[]
@@ -12,6 +13,7 @@ type VaultCardProps = {
 
 export const VaultCard: FC<VaultCardProps> = ({
   name,
+  type,
   address,
   tokenBalances,
   nbrTokens,
@@ -38,6 +40,7 @@ export const VaultCard: FC<VaultCardProps> = ({
   return (
     <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 lg:w-80 md:w-56 w-48 space-y-2">
       <div>
+        <div className="text-lg">{type}</div>
         <div className="text-lg">{name}</div>
         <div className="text-sm">$ {formatNumber(balance) ?? 0}</div>
         <div className="text-sm">{formatNumber(nbrTokens) ?? 0} token(s)</div>

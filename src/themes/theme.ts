@@ -1,16 +1,21 @@
-import { extendTheme } from '@chakra-ui/react'
+import { extendTheme, Colors } from '@chakra-ui/react'
+import { StyleConfig } from '@chakra-ui/theme-tools'
 
-const colors = {
+const colors: Colors = {
   brand: {
     darkBlue1: '#050A1B',
     darkBlue2: '#0E1235',
   },
   interface: {
-    orange: '#ED963A',
+    orange: {
+      base: '#ED963A',
+      dark: '#CA7D2C',
+      light: '#F3AC61',
+    },
   },
 }
 
-const Heading = {
+const Heading: StyleConfig = {
   variants: {
     h1: {
       fontSize: '3xl',
@@ -25,25 +30,45 @@ const Heading = {
   },
 }
 
-const Input = {
+const Input: StyleConfig = {
   variants: {
     outline: {
       field: {
         borderColor: 'white',
         bg: 'transparent',
+        _hover: {
+          borderColor: 'interface.orange.base',
+        },
+        _focus: {
+          borderColor: 'interface.orange.base',
+        },
       },
     },
   },
   defaultProps: {
     variant: 'outline',
+    // @ts-ignore
+    focusBorderColor: 'interface.orange.base',
   },
 }
 
-const Button = {
+const Button: StyleConfig = {
   variants: {
+    solid: {
+      color: 'white',
+      bg: 'interface.orange.base',
+      _hover: {
+        bg: 'interface.orange.dark',
+      },
+    },
     outline: {
-      borderColor: 'interface.orange',
-      color: 'interface.orange',
+      borderColor: 'interface.orange.base',
+      color: 'interface.orange.base',
+      _hover: {
+        borderColor: 'interface.orange.dark',
+        color: 'interface.orange.dark',
+        bg: 'transparent',
+      },
     },
   },
 }
