@@ -1,8 +1,10 @@
+import { Image } from '@chakra-ui/image'
+import { Box, Flex, Heading, Text } from '@chakra-ui/layout'
 import { Link } from 'react-router-dom'
 import { SWRConfig } from 'swr'
 
 import Routes from './Routes'
-
+import logo from './assets/img/logo.png'
 function App() {
   return (
     <SWRConfig
@@ -12,25 +14,35 @@ function App() {
         revalidateOnFocus: false,
       }}
     >
-      <div className="flex flex-col h-full bg-primary-500 text-white">
-        <div className="bg-primary-700 w-full z-10 fixed">
-          <div className="p-4">
+      <Flex direction="column" bg="brand.darkBlue2" height="full">
+        <Box
+          width="full"
+          zIndex="10"
+          position="fixed"
+          bg="brand.darkBlue2"
+          borderBottom="1px solid"
+          borderColor="#373B49"
+        >
+          <Flex py="4" pr="4" pl="9">
             <Link to="/">
-              <img
-                src="https://daohaus.club/img/logo.png"
-                alt="daohaus logo"
-                width="134px"
-                height="32px"
-              />
+              <Flex alignItems="center">
+                <Image src={logo} mr="5" alt="Books" width={12} height={12} />
+                <Heading variant="h1">DAO Books</Heading>
+              </Flex>
             </Link>
-          </div>
-        </div>
-        <div className="min-h-screen flex-1 overflow-y-auto">
-          <div className="mt-20 flex flex-col xl:max-w-7xl lg:max-w-5xl md:max-w-4xl m-auto">
+            <Box position="relative" top="4" ml="4" color="#0E99C4">
+              <Link to="/">
+                <Text>SWITCH DAO</Text>
+              </Link>
+            </Box>
+          </Flex>
+        </Box>
+        <Box sx={{ minHeight: '100vh' }} flex="1" overflowY="auto">
+          <Flex direction="column" pt="20">
             <Routes />
-          </div>
-        </div>
-      </div>
+          </Flex>
+        </Box>
+      </Flex>
     </SWRConfig>
   )
 }

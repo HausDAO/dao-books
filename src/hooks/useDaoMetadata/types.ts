@@ -1,6 +1,10 @@
 export type DaoMetadata = {
   contractAddress: string
   network: string
+  avatarImg: string
+  customThemeConfig: {
+    bgImg: string
+  } | null
   name: string
   description: string
   purpose: string

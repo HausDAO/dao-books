@@ -1,7 +1,6 @@
+import { Button } from '@chakra-ui/button'
 import { FC } from 'react'
 import { useHistory } from 'react-router'
-
-import { Button } from './atoms'
 
 export const Error: FC = () => {
   const history = useHistory()
