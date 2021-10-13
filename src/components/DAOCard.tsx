@@ -4,7 +4,8 @@ import { Box, Flex, Stack, Text } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
 
-import { getImageFromIPFSHash } from '../utils/web3'
+import { getImageFromIPFSHash } from '../utils/web3/ipfs'
+import { Card } from './atoms'
 type DAOCardProps = {
   dao: {
     name: string
@@ -16,16 +17,7 @@ type DAOCardProps = {
 
 export const DAOCard: FC<DAOCardProps> = ({ dao }) => {
   return (
-    <Flex
-      direction="column"
-      bg="brand.darkBlue1"
-      p="6"
-      border="1px solid #C4C4C4"
-      borderRadius="md"
-      w="80"
-      h="56"
-      justify="space-between"
-    >
+    <Card>
       <Box>
         <Stack spacing="4">
           <Flex alignItems="center">
@@ -40,6 +32,6 @@ export const DAOCard: FC<DAOCardProps> = ({ dao }) => {
           <Button variant="outline">View Books</Button>
         </Link>
       </Box>
-    </Flex>
+    </Card>
   )
 }

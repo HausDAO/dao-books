@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import moment from 'moment'
-import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Cell, Column } from 'react-table'
 
 import { TokenBalance } from '../../../types/DAO'

@@ -1,16 +1,19 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { orderBy } from 'lodash'
 
-import { TokenBalanceLineItem, VaultTransaction } from '.'
 import { getMinions } from '../../../services/getMinions'
+import {
+  getTokenExplorerLink,
+  getTxExplorerLink,
+} from '../../../utils/web3/explorer'
+import { cacheTokenPrices } from '../../../utils/web3/token'
 import CalculateTokenBalances, {
   CalculatedTokenBalances,
 } from './CalculateTokenBalances'
+import { TokenBalanceLineItem, VaultTransaction } from './columns'
 
 import { getDAOMetadata } from '@/services/getDAOMetadata'
-import { cacheTokenPrices } from '@/services/getTokenUSDPrice'
 import { MinionTransaction, TokenBalance } from '@/types/DAO'
-import { getTokenExplorerLink, getTxExplorerLink } from '@/utils/explorer'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const getMinionDetailProps = async (

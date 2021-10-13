@@ -10,11 +10,12 @@ import {
   WrapItem,
 } from '@chakra-ui/layout'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { DaoMetadata } from '../../../hooks/useDaoMetadata/types'
 import { MinionWithTokenBalances, Moloch } from '../../../types/DAO'
-import { getDAOLink, getImageFromIPFSHash } from '../../../utils/web3'
+import { getDAOLink } from '../../../utils/web3/daohaus'
+import { getImageFromIPFSHash } from '../../../utils/web3/ipfs'
 import { VaultCard } from '../../VaultCard'
 import { getVaultsProps } from './getVaultsProps'
 
@@ -83,35 +84,25 @@ export const Vaults = (): JSX.Element => {
 
           <Wrap spacing="8">
             <WrapItem>
-              <Link
-                className="block"
-                to={`/dao/${daoMetadata.contractAddress}/treasury`}
-              >
-                <VaultCard
-                  type="Treasury"
-                  name="DAO Treasury"
-                  address={daoMetadata.contractAddress}
-                  tokenBalances={moloch.tokenBalances}
-                  nbrTokens={moloch.tokenBalances.length}
-                />
-              </Link>
+              <VaultCard
+                type="TREASURY"
+                name="DAO Treasury"
+                daoAddress={daoMetadata.contractAddress}
+                path="treasury"
+                tokenBalances={moloch.tokenBalances}
+              />
             </WrapItem>
             {minions.map((minion) => {
               return (
                 <WrapItem>
-                  <Link
+                  <VaultCard
                     key={minion.minionAddress}
-                    to={`/dao/${daoMetadata.contractAddress}/minion/${minion.minionAddress}`}
-                  >
-                    <VaultCard
-                      type="Minion"
-                      name={minion.name}
-                      address={minion.minionAddress}
-                      tokenBalances={minion.tokenBalances}
-                      nbrTokens={minion.tokenBalances.length}
-                      nbrTransactions={minion.transactions.length}
-                    />
-                  </Link>
+                    type="MINION"
+                    name={minion.name}
+                    daoAddress={daoMetadata.contractAddress}
+                    path={`minion/${minion.minionAddress}`}
+                    tokenBalances={minion.tokenBalances}
+                  />
                 </WrapItem>
               )
             })}

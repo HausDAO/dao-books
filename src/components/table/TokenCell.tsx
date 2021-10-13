@@ -2,11 +2,8 @@ import { FC, useEffect, useState } from 'react'
 
 import { MultiLineCell } from '.'
 import { TokenBalance } from '../../types/DAO'
-import {
-  convertTokenValueToUSD,
-  formatNumber,
-  formatToken,
-} from '../../utils/methods'
+import { formatNumber } from '../../utils/methods'
+import { convertTokenValueToUSD, formatToken } from '../../utils/web3/token'
 
 export const TokenCell: FC<{ tokenBalance: TokenBalance }> = ({
   tokenBalance,

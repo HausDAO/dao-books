@@ -2,7 +2,7 @@ import { useClipboard } from '@chakra-ui/hooks'
 import { FC } from 'react'
 import { HiOutlineCheckCircle, HiOutlineClipboardCopy } from 'react-icons/hi'
 
-import { formatAddress } from '../../utils/methods'
+import { formatAddress } from '../../utils/web3/address'
 
 export const AddressCell: FC<{ address: string }> = ({ address }) => {
   const { hasCopied, onCopy } = useClipboard(address)

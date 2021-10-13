@@ -1,21 +1,21 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { orderBy, startCase } from 'lodash'
 
-import { TokenBalanceLineItem, VaultTransaction } from '.'
 import { DaoMetadata } from '../../../hooks/useDaoMetadata/types'
 import { getDAOMetadata } from '../../../services/getDAOMetadata'
-import { cacheTokenPrices } from '../../../services/getTokenUSDPrice'
 import { Moloch, MolochStatsBalance, TokenBalance } from '../../../types/DAO'
+import { getProposalLink } from '../../../utils/web3/daohaus'
 import {
   getTokenExplorerLink,
   getTxExplorerLink,
-} from '../../../utils/explorer'
-import fetchGraph from '../../../utils/fetchGraph'
-import fetchStatsGraph from '../../../utils/fetchStatsGraph'
-import { getProposalLink } from '../../../utils/proposal'
+} from '../../../utils/web3/explorer'
+import fetchGraph from '../../../utils/web3/fetchGraph'
+import fetchStatsGraph from '../../../utils/web3/fetchStatsGraph'
+import { cacheTokenPrices } from '../../../utils/web3/token'
 import CalculateTokenBalances, {
   CalculatedTokenBalances,
 } from './CalculateTokenBalances'
+import { TokenBalanceLineItem, VaultTransaction } from './columns'
 
 const GET_MOLOCH = `
 query moloch($contractAddr: String!) {
