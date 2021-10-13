@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 
-import { convertTokenValueToUSD, formatNumber } from '../../../utils/methods'
+import { formatNumber } from '../../../utils/methods'
+import { convertTokenValueToUSD } from '../../../utils/web3/token'
 import { TokenBalanceLineItem } from './columns'
 type VaultCardProps = {
   title: string

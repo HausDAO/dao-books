@@ -1,23 +1,26 @@
+import { Button } from '@chakra-ui/button'
+import { Flex, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useEffect, useState, FC } from 'react'
+import { Link } from 'react-router-dom'
 
 import { TokenBalance } from '../types/DAO'
-import { convertTokenValueToUSD, formatNumber } from '../utils/methods'
+import { formatNumber } from '../utils/methods'
+import { convertTokenValueToUSD } from '../utils/web3/token'
+import { Card, TokenAvatar } from './atoms'
 type VaultCardProps = {
   type: string
-  address: string
+  daoAddress: string
+  path: string
   name: string
   tokenBalances: TokenBalance[]
-  nbrTokens: number
-  nbrTransactions?: number
 }
 
 export const VaultCard: FC<VaultCardProps> = ({
   name,
   type,
-  address,
+  daoAddress,
+  path,
   tokenBalances,
-  nbrTokens,
-  nbrTransactions,
 }) => {
   const [balance, setBalance] = useState<number>()
 
@@ -38,21 +41,27 @@ export const VaultCard: FC<VaultCardProps> = ({
   })
 
   return (
-    <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 lg:w-80 md:w-56 w-48 space-y-2">
-      <div>
-        <div className="text-lg">{type}</div>
+    <Card h="60">
+      <Stack spacing="1">
+        <Text fontSize="sm">{type}</Text>
         <div className="text-lg">{name}</div>
+      </Stack>
+      <Stack spacing="2">
         <div className="text-sm">$ {formatNumber(balance) ?? 0}</div>
-        <div className="text-sm">{formatNumber(nbrTokens) ?? 0} token(s)</div>
-        {nbrTransactions !== undefined && (
-          <div className="text-sm">
-            {formatNumber(nbrTransactions) ?? 0} transaction(s)
-          </div>
-        )}
-      </div>
-      <p className="text-secondary-500 text-sm hover:underline">
-        Vault Book &rarr;
-      </p>
-    </div>
+        <Wrap>
+          {tokenBalances.map((tokenBalance) => {
+            return <TokenAvatar token={tokenBalance.token} />
+          })}
+        </Wrap>
+      </Stack>
+      <Flex justify="space-between" align="center">
+        <div className="text-sm">
+          {formatNumber(tokenBalances.length) ?? 0} token(s)
+        </div>
+        <Link to={`/dao/${daoAddress}/${path}`}>
+          <Button variant="outline">Vault Book</Button>
+        </Link>
+      </Flex>
+    </Card>
   )
 }
