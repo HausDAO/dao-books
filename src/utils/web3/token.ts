@@ -25,9 +25,7 @@ const getTokenPrices = async () => {
   return tokenPrices
 }
 
-export const getTokenUSDPrice = async (
-  tokenAddress: string
-): Promise<number> => {
+const getTokenUSDPrice = async (tokenAddress: string): Promise<number> => {
   const tokens = await getTokenPrices()
   const { price = 0 } = tokens[tokenAddress] || {}
   return price

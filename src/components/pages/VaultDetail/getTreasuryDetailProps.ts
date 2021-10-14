@@ -60,6 +60,8 @@ query MolochBalances($molochAddress: String!, $first: Int, $skip: Int) {
       proposalId
       applicant
       details
+      sharesRequested
+      lootRequested
     }
   }
 }
@@ -211,11 +213,12 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
             proposal: {
               id: molochStatBalance.proposalDetail?.proposalId ?? '',
               link: proposalLink,
-              shares: '0', // TBD
-              loot: '0', // TBD
+              shares: molochStatBalance.proposalDetail?.sharesRequested ?? '',
+              loot: molochStatBalance.proposalDetail?.lootRequested ?? '',
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
               recipient: '', // TBD
               title: proposalTitle,
+              type: '', // TBD
             },
             ...balances,
           }

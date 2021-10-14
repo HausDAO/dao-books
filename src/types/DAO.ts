@@ -54,6 +54,8 @@ export type MolochStatsBalance = {
     proposalId: string
     applicant: string
     details: string | null
+    lootRequested: string | null
+    sharesRequested: string | null
   } | null
 }
 

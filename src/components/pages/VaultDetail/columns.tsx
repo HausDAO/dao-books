@@ -29,6 +29,7 @@ export type VaultTransaction = {
     title: string // title of the proposal in details
     applicant: string // submitted by address
     recipient: string
+    type: string // type of the proposal.
   }
 }
 
@@ -213,6 +214,14 @@ export const TREASURY_COLUMNS: Column<VaultTransaction>[] = [
     Footer: 'Title',
     // @ts-ignore
     accessor: 'proposal.title',
+  },
+  {
+    Header: 'Type',
+    Footer: 'Type',
+    // @ts-ignore
+    accessor: 'proposal.type',
+    Filter: SelectColumnFilter,
+    filter: 'includes',
   },
   {
     Header: 'Token',
