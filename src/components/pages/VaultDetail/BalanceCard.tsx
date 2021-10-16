@@ -1,8 +1,11 @@
+import { Text } from '@chakra-ui/layout'
 import { FC, useEffect, useState } from 'react'
 
 import { formatNumber } from '../../../utils/methods'
 import { convertTokenValueToUSD } from '../../../utils/web3/token'
+import { Card } from '../../atoms'
 import { TokenBalanceLineItem } from './columns'
+
 type VaultCardProps = {
   title: string
   tokenBalances: TokenBalanceLineItem[]
@@ -37,9 +40,9 @@ export const BalanceCard: FC<VaultCardProps> = ({
   }, [])
 
   return (
-    <div className="flex rounded-md shadow border-2 border-primary-300 flex-col p-4 lg:w-80 md:w-56 w-48">
-      <div className="text-lg">{title}</div>
-      <div className="text-sm">$ {usdValues}</div>
-    </div>
+    <Card h="24">
+      <Text fontSize="sm">{title}</Text>
+      <Text mt="1">$ {usdValues}</Text>
+    </Card>
   )
 }

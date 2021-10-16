@@ -5,6 +5,7 @@ import { Cell, Column } from 'react-table'
 import { TokenBalance } from '../../../types/DAO'
 import {
   AddressCell,
+  MultiLineCell,
   SelectColumnFilter,
   TokenCell,
   WithExternalLinkCell,
@@ -28,8 +29,6 @@ export type VaultTransaction = {
     loot: string // requested in case of proposal, ragequitted in case of rage quit
     title: string // title of the proposal in details
     applicant: string // submitted by address
-    recipient: string
-    type: string // type of the proposal.
   }
 }
 
@@ -201,27 +200,21 @@ export const TREASURY_COLUMNS: Column<VaultTransaction>[] = [
     ),
   },
   {
-    Header: 'Recipient',
-    Footer: 'Recipient',
-    // @ts-ignore
-    accessor: 'proposal.recipient',
-    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => (
-      <AddressCell address={value} />
-    ),
-  },
-  {
     Header: 'Title',
     Footer: 'Title',
     // @ts-ignore
     accessor: 'proposal.title',
-  },
-  {
-    Header: 'Type',
-    Footer: 'Type',
-    // @ts-ignore
-    accessor: 'proposal.type',
-    Filter: SelectColumnFilter,
-    filter: 'includes',
+    Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
+      const title = value
+      const shares = Number(row.original.proposal?.shares ?? '')
+      console.log('shares', shares)
+      return (
+        <MultiLineCell
+          title={title}
+          description={`${shares ? `Shares: ${shares}` : ''}`}
+        />
+      )
+    },
   },
   {
     Header: 'Token',

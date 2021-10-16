@@ -31,12 +31,11 @@ export function SelectColumnFilter<T extends Record<string, unknown>>({
         onChange={(e) => {
           setFilter(e.target.value || undefined)
         }}
+        fontSize="sm"
       >
-        <option className="text-gray-700" value="">
-          All
-        </option>
+        <option value="">All</option>
         {options.map((option, i) => (
-          <option className="text-gray-700" key={i} value={option}>
+          <option key={i} value={option}>
             {option}
           </option>
         ))}

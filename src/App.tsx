@@ -5,7 +5,10 @@ import { SWRConfig } from 'swr'
 
 import Routes from './Routes'
 import logo from './assets/img/logo.png'
+import { useCustomTheme } from './contexts/CustomThemeContext'
+import { getImageFromIPFSHash } from './utils/web3/ipfs'
 function App() {
+  const { theme } = useCustomTheme()
   return (
     <SWRConfig
       value={{
@@ -27,19 +30,36 @@ function App() {
             <Link to="/">
               <Flex alignItems="center">
                 <Image src={logo} mr="5" alt="Books" width={12} height={12} />
-                <Heading variant="h1">DAO Books</Heading>
+                <Heading fontFamily="Mulish" variant="h1">
+                  DAO Books
+                </Heading>
               </Flex>
             </Link>
             <Box position="relative" top="4" ml="4" color="#0E99C4">
               <Link to="/">
-                <Text>SWITCH DAO</Text>
+                <Text fontFamily="Mulish">SWITCH DAO</Text>
               </Link>
             </Box>
           </Flex>
         </Box>
         <Box sx={{ minHeight: '100vh' }} flex="1" overflowY="auto">
           <Flex direction="column" pt="20">
-            <Routes />
+            <Box
+              sx={{ minHeight: 'calc(100vh - 5rem)' }}
+              bgImage={getImageFromIPFSHash(theme?.images?.bg)}
+              backgroundSize="cover"
+            >
+              <Box
+                sx={{ minHeight: 'calc(100vh - 5rem)' }}
+                p="9"
+                backdropFilter={
+                  theme?.images?.bg &&
+                  `brightness(${theme?.images?.bgOpacity?.toString()}%)`
+                }
+              >
+                <Routes />
+              </Box>
+            </Box>
           </Flex>
         </Box>
       </Flex>

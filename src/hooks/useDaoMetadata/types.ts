@@ -4,6 +4,10 @@ export type DaoMetadata = {
   avatarImg: string
   customThemeConfig: {
     bgImg: string
+    headingFont?: string
+    bodyFont?: string
+    primary500?: string
+    bgOverlayOpacity?: number
   } | null
   name: string
   description: string

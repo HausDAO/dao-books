@@ -6,10 +6,11 @@ import {
 } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 
+import { useCustomTheme } from '../../contexts/CustomThemeContext'
 import { DAOCard } from '../DAOCard'
 
 const POPULAR_DAOS = [
@@ -62,8 +63,15 @@ export const Home: FC = () => {
     // TODO: should we validate if the address is correct?
     history.push(`/dao/${data.address}`)
   }
+
+  const { resetTheme } = useCustomTheme()
+
+  useEffect(() => {
+    resetTheme()
+  }, [])
+
   return (
-    <Stack spacing="8" p="9">
+    <Stack spacing="8">
       <Box>
         <Heading variant="h2" as="h2" mb="4">
           Explore DAO Books

@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { DAO_HAUS_API_URL } from '../../utils/constants'
+import { DAO_HAUS_API_URL } from '../../utils/web3/constants'
 import { DaoMetadata } from './types'
 
 type DaoMetadataReturnType = {

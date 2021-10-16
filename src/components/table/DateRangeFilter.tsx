@@ -80,6 +80,8 @@ export function DateRangeFilter<T extends Record<string, unknown>>({
           {...input.fieldProps}
           value={filterValue}
           placeholder="Filter by Date Range"
+          borderColor="borderColor"
+          fontSize="sm"
         />
       </PopoverTrigger>
       <Portal>
