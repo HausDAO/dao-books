@@ -1,19 +1,6 @@
 import { extendTheme, Colors } from '@chakra-ui/react'
 import { StyleConfig } from '@chakra-ui/theme-tools'
-
-const colors: Colors = {
-  brand: {
-    darkBlue1: '#050A1B',
-    darkBlue2: '#0E1235',
-  },
-  interface: {
-    orange: {
-      base: '#ED963A',
-      dark: '#CA7D2C',
-      light: '#F3AC61',
-    },
-  },
-}
+import { merge } from 'lodash'
 
 const Heading: StyleConfig = {
   variants: {
@@ -73,19 +60,60 @@ const Button: StyleConfig = {
   },
 }
 
-export const createTheme = () => {
+export interface DAOTheme {
+  fonts: { heading?: string; body?: string }
+  colors: Colors
+  images: {
+    bg?: string
+    bgOpacity?: number
+  }
+}
+
+export const DEFAULT_THEME: DAOTheme = {
+  fonts: {
+    heading: 'Mulish',
+    body: 'Mulish',
+  },
+  colors: {
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+    brand: {
+      darkBlue1: '#050A1B',
+      darkBlue2: '#0E1235',
+    },
+    interface: {
+      orange: {
+        base: '#ED963A',
+        dark: '#CA7D2C',
+        light: '#F3AC61',
+      },
+    },
+  },
+  images: {
+    bg: '',
+  },
+}
+
+const Link = {
+  baseStyle: {
+    color: 'interface.orange.base',
+    _hover: {
+      color: 'interface.orange.dark',
+    },
+  },
+}
+
+export const createTheme = (daoTheme?: DAOTheme) => {
+  const mergedTheme = merge(DEFAULT_THEME, daoTheme ?? {})
+
   return extendTheme({
     active: true,
-    colors,
     components: {
       Heading,
       Input,
       Button,
+      Link,
     },
-    fonts: {
-      heading: 'Mulish',
-      body: 'Mulish',
-    },
+    ...mergedTheme,
     config: {
       initialColorMode: 'dark',
       useSystemColorMode: false,

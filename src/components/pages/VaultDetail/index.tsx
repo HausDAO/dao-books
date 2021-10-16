@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 
+import { useCustomTheme } from '../../../contexts/CustomThemeContext'
 import Table from '../../table/Table'
 import { BalanceCard } from './BalanceCard'
 import {
@@ -15,13 +16,11 @@ import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
 
-// Making this client side because chart.js cannot render on server side
-
 export const VaultDetail = (): JSX.Element => {
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
   const { daoAddress, minionAddress } =
     useParams<{ daoAddress: string; minionAddress?: string }>()
-
+  const { updateTheme } = useCustomTheme()
   const transactionsColumns = useMemo(() => {
     if (minionAddress) {
       return TRANSACTIONS_COLUMNS.concat(MINION_COLUMNS)
@@ -32,11 +31,15 @@ export const VaultDetail = (): JSX.Element => {
 
   const [props, setProps] = useState<any>({})
   const updateProps = async () => {
-    if (minionAddress) {
-      setProps(await getMinionDetailProps(daoAddress, minionAddress))
-    } else {
-      setProps(await getTreasuryDetailProps(daoAddress))
-    }
+    const data = await (async () => {
+      if (minionAddress) {
+        return getMinionDetailProps(daoAddress, minionAddress)
+      } else {
+        return getTreasuryDetailProps(daoAddress)
+      }
+    })()
+    setProps(data)
+    updateTheme(data?.daoMetadata)
   }
 
   useEffect(() => {
@@ -66,17 +69,17 @@ export const VaultDetail = (): JSX.Element => {
       </div>
       <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
         <BalanceCard
-          title="Inflow"
+          title="INFLOW"
           tokenBalances={tokenBalances}
           type="inflow"
         />
         <BalanceCard
-          title="Outflow"
+          title="OUTFLOW"
           tokenBalances={tokenBalances}
           type="outflow"
         />
         <BalanceCard
-          title="Closing"
+          title="CLOSING"
           tokenBalances={tokenBalances}
           type="closing"
         />
@@ -90,7 +93,7 @@ export const VaultDetail = (): JSX.Element => {
           data={transactions || []}
           initialState={{
             pageSize: 20,
-            hiddenColumns: ['currentLoot'],
+            hiddenColumns: ['proposal.shares', 'proposal.loot'],
           }}
         />
       </div>

@@ -49,15 +49,18 @@ export const VaultCard: FC<VaultCardProps> = ({
       <Stack spacing="2">
         <div className="text-sm">$ {formatNumber(balance) ?? 0}</div>
         <Wrap>
-          {tokenBalances.map((tokenBalance) => {
+          {tokenBalances.map((tokenBalance, index) => {
+            if (index > 6) {
+              return <></>
+            }
             return <TokenAvatar token={tokenBalance.token} />
           })}
+          <div className="text-sm">
+            {formatNumber(tokenBalances.length) ?? 0} token(s)
+          </div>
         </Wrap>
       </Stack>
-      <Flex justify="space-between" align="center">
-        <div className="text-sm">
-          {formatNumber(tokenBalances.length) ?? 0} token(s)
-        </div>
+      <Flex justify="flex-end" align="center">
         <Link to={`/dao/${daoAddress}/${path}`}>
           <Button variant="outline">Vault Book</Button>
         </Link>

@@ -216,9 +216,7 @@ export const getTreasuryDetailProps = async (daoAddress: string) => {
               shares: molochStatBalance.proposalDetail?.sharesRequested ?? '',
               loot: molochStatBalance.proposalDetail?.lootRequested ?? '',
               applicant: molochStatBalance.proposalDetail?.applicant ?? '',
-              recipient: '', // TBD
               title: proposalTitle,
-              type: '', // TBD
             },
             ...balances,
           }

@@ -1,3 +1,4 @@
+import { Box, Flex, Link } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 
@@ -10,19 +11,14 @@ export const WithExternalLinkCell: FC<{
     return <></>
   }
   return (
-    <div className="flex flex-col space-y-1">
-      <div>{label}</div>
+    <Flex direction="column">
+      <Box mb="1">{label}</Box>
       {link && (
-        <a
-          href={link}
-          className="text-xs hover:underline flex items-center"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link href={link} fontSize="sm" isExternal>
           {linkLabel}
           <HiOutlineExternalLink className="inline ml-1" />
-        </a>
+        </Link>
       )}
-    </div>
+    </Flex>
   )
 }

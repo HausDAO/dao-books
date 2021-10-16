@@ -1,4 +1,5 @@
 import { useClipboard } from '@chakra-ui/hooks'
+import { Flex } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { HiOutlineCheckCircle, HiOutlineClipboardCopy } from 'react-icons/hi'
 
@@ -14,18 +15,20 @@ export const AddressCell: FC<{ address: string }> = ({ address }) => {
     <div className="flex flex-col space-y-1">
       <div title={address}>{counterparty}</div>
       {hasCopied ? (
-        <div className="text-xs flex cursor-pointer text-[#ed963a]">
+        <Flex fontSize="sm" color="interface.orange.base">
           <HiOutlineCheckCircle className="w-4 h-4 mr-1 relative t-1" />
           Copied
-        </div>
+        </Flex>
       ) : (
-        <div
+        <Flex
           onClick={onCopy}
-          className="text-xs flex cursor-pointer text-[#ed963a]"
+          cursor="pointer"
+          fontSize="sm"
+          color="interface.orange.base"
         >
           <HiOutlineClipboardCopy className="w-4 h-4 mr-1 relative t-1" />
           Copy
-        </div>
+        </Flex>
       )}
     </div>
   )
