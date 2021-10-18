@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
@@ -62,6 +63,13 @@ export const VaultDetail = (): JSX.Element => {
 
   return (
     <div className="p-4 space-y-8">
+      <Helmet>
+        <title>DAO Books - vault details</title>
+        <meta
+          name="description"
+          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
+        />
+      </Helmet>
       <div>
         <H1>
           {daoMetadata.name} - {vaultName}

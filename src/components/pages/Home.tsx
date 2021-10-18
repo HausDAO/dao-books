@@ -7,6 +7,7 @@ import {
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
 import { FC, useEffect } from 'react'
+import { Helmet } from 'react-helmet'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 
@@ -72,6 +73,13 @@ export const Home: FC = () => {
 
   return (
     <Stack spacing="8">
+      <Helmet>
+        <title>DAO books</title>
+        <meta
+          name="description"
+          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
+        />
+      </Helmet>
       <Box>
         <Heading variant="h2" as="h2" mb="4">
           Explore DAO Books
