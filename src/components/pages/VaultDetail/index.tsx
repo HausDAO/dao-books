@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
@@ -62,6 +63,16 @@ export const VaultDetail = (): JSX.Element => {
 
   return (
     <div className="p-4 space-y-8">
+      <Helmet>
+        {!!minionAddress && (
+          <title>
+            {vaultName} | {daoMetadata.name} | DAO Books
+          </title>
+        )}
+        {!minionAddress && (
+          <title>Treasury | {daoMetadata.name} | DAO Books</title>
+        )}
+      </Helmet>
       <div>
         <H1>
           {daoMetadata.name} - {vaultName}

@@ -2,6 +2,7 @@ import { Image } from '@chakra-ui/image'
 import { Box, Flex, Heading, Text } from '@chakra-ui/layout'
 import { Link } from 'react-router-dom'
 import { SWRConfig } from 'swr'
+import { Helmet } from 'react-helmet'
 
 import Routes from './Routes'
 import logo from './assets/img/logo.png'
@@ -17,6 +18,13 @@ function App() {
         revalidateOnFocus: false,
       }}
     >
+      <Helmet>
+        <title>DAO Books</title>
+        <meta
+          name="description"
+          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
+        />
+      </Helmet>
       <Flex direction="column" bg="brand.darkBlue2" height="full">
         <Box
           width="full"

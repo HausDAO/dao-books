@@ -2,6 +2,7 @@ import { Avatar } from '@chakra-ui/avatar'
 import { Button } from '@chakra-ui/button'
 import { Flex, Spacer, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
 import { useEffect, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
@@ -51,6 +52,9 @@ export const Vaults = (): JSX.Element => {
 
   return (
     <Stack spacing="8">
+      <Helmet>
+        <title>{daoMetadata.name} | DAO Books</title>
+      </Helmet>
       <Flex justify="space-between">
         <Flex alignItems="center">
           <Avatar
