@@ -64,11 +64,14 @@ export const VaultDetail = (): JSX.Element => {
   return (
     <div className="p-4 space-y-8">
       <Helmet>
-        <title>DAO Books - vault details</title>
-        <meta
-          name="description"
-          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
-        />
+        {!!minionAddress && (
+          <title>
+            {vaultName} | {daoMetadata.name} | DAO Books
+          </title>
+        )}
+        {!minionAddress && (
+          <title>Treasury | {daoMetadata.name} | DAO Books</title>
+        )}
       </Helmet>
       <div>
         <H1>

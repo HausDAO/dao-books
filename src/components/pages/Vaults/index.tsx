@@ -53,11 +53,7 @@ export const Vaults = (): JSX.Element => {
   return (
     <Stack spacing="8">
       <Helmet>
-        <title>DAO Books - vaults</title>
-        <meta
-          name="description"
-          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
-        />
+        <title>{daoMetadata.name} | DAO Books</title>
       </Helmet>
       <Flex justify="space-between">
         <Flex alignItems="center">

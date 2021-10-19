@@ -75,10 +75,6 @@ export const Home: FC = () => {
     <Stack spacing="8">
       <Helmet>
         <title>DAO books</title>
-        <meta
-          name="description"
-          content="Double entry style bookkeeping solution for moloch DAOs from https://daohaus.club/"
-        />
       </Helmet>
       <Box>
         <Heading variant="h2" as="h2" mb="4">
