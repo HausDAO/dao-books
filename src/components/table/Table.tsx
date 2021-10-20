@@ -223,7 +223,10 @@ export default function Table<T extends Record<string, unknown>>({
                 <Thead bg="brand.darkBlue1">
                   {headerGroups.map((headerGroup) => (
                     <>
-                      <Tr {...headerGroup.getHeaderGroupProps()}>
+                      <Tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key="table-header-group-1"
+                      >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
                           // eslint-disable-next-line react/jsx-key
@@ -253,7 +256,10 @@ export default function Table<T extends Record<string, unknown>>({
                           </Th>
                         ))}
                       </Tr>
-                      <Tr {...headerGroup.getHeaderGroupProps()}>
+                      <Tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key="table-header-group-2"
+                      >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
                           // eslint-disable-next-line react/jsx-key

@@ -7,7 +7,7 @@ import {
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
 import { FC, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 
