@@ -207,7 +207,6 @@ export const TREASURY_COLUMNS: Column<VaultTransaction>[] = [
     Cell: ({ value, row }: Cell<VaultTransaction>): JSX.Element => {
       const title = value
       const shares = Number(row.original.proposal?.shares ?? '')
-      console.log('shares', shares)
       return (
         <MultiLineCell
           title={title}
