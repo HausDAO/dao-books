@@ -139,11 +139,13 @@ export default function Table<T extends Record<string, unknown>>({
   data,
   initialState,
   options,
+  onStateChangeCallback,
 }: {
   columns: Column<T>[]
   data: T[]
   initialState?: Partial<TableState<T>>
   options?: TableOptions<T>
+  onStateChangeCallback: (state: object) => void
 }): JSX.Element {
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -182,6 +184,10 @@ export default function Table<T extends Record<string, unknown>>({
     usePagination,
     useExportData
   )
+
+  useEffect(() => {
+    onStateChangeCallback(state)
+  }, [state])
 
   const DEFAULT_OPTIONS: TableOptions<Record<string, unknown>> = {
     onRowClick: undefined,
