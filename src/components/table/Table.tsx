@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/table'
 import { merge } from 'lodash'
 import Papa from 'papaparse'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { GrDocumentCsv } from 'react-icons/gr'
 import {
@@ -221,11 +221,11 @@ export default function Table<T extends Record<string, unknown>>({
                 borderColor="rgba(255, 255, 255, 0.2)"
               >
                 <Thead bg="brand.darkBlue1">
-                  {headerGroups.map((headerGroup) => (
-                    <>
+                  {headerGroups.map((headerGroup, index) => (
+                    <Fragment key={index}>
                       <Tr
                         {...headerGroup.getHeaderGroupProps()}
-                        key="table-header-group-1"
+                        key={`table-header-group-1-${index}`}
                       >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
@@ -258,7 +258,7 @@ export default function Table<T extends Record<string, unknown>>({
                       </Tr>
                       <Tr
                         {...headerGroup.getHeaderGroupProps()}
-                        key="table-header-group-2"
+                        key={`table-header-group-2-${index}`}
                       >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
@@ -272,7 +272,7 @@ export default function Table<T extends Record<string, unknown>>({
                           </Th>
                         ))}
                       </Tr>
-                    </>
+                    </Fragment>
                   ))}
                 </Thead>
                 <Tbody

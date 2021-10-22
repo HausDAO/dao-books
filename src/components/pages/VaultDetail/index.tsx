@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { useParams } from 'react-router'
+import { useParams, useHistory, useLocation } from 'react-router'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
 import Table from '../../table/Table'
@@ -18,6 +18,8 @@ import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
 
 export const VaultDetail = (): JSX.Element => {
+  const history = useHistory()
+  const location = useLocation()
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
   const { daoAddress, minionAddress } =
     useParams<{ daoAddress: string; minionAddress?: string }>()
