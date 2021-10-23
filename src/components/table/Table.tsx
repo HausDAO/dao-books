@@ -132,8 +132,6 @@ interface TableOptions<T> {
   displayExportOptions?: boolean
 }
 
-// TODO: Empty State
-
 export default function Table<T extends Record<string, unknown>>({
   columns,
   data,
@@ -190,7 +188,6 @@ export default function Table<T extends Record<string, unknown>>({
     []
   )
 
-  console.log(state)
   useEffect(() => {
     debounceStateChange(state)
   }, [state])

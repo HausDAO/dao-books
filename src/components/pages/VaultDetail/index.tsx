@@ -22,6 +22,11 @@ import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
 
+enum TableName {
+  TRANSACTIONS = 'transactions',
+  TOKEN_BALANCES = 'tokenBalances',
+}
+
 export const VaultDetail = (): JSX.Element => {
   const history = useHistory()
   const location = useLocation()
@@ -62,10 +67,12 @@ export const VaultDetail = (): JSX.Element => {
     const URLState = qs.parse(location.search, { ignoreQueryPrefix: true })
 
     setTransactionsTableState(
-      get(URLState, 'transactions', {}) as Partial<TableState<VaultTransaction>>
+      get(URLState, TableName.TRANSACTIONS, {}) as Partial<
+        TableState<VaultTransaction>
+      >
     )
     setTokenBalancesTableState(
-      get(URLState, 'tokenBalances', {}) as Partial<
+      get(URLState, TableName.TOKEN_BALANCES, {}) as Partial<
         TableState<TokenBalanceLineItem>
       >
     )
@@ -91,7 +98,7 @@ export const VaultDetail = (): JSX.Element => {
   }
 
   const handleTableStateChange =
-    (tableName: 'transactions' | 'tokenBalances') => (tableState: any) => {
+    (tableName: TableName) => (tableState: any) => {
       const { filters, globalFilter, pageSize, sortBy } = tableState
 
       const currentURLState = qs.parse(location.search, {
@@ -155,7 +162,7 @@ export const VaultDetail = (): JSX.Element => {
             hiddenColumns: ['proposal.shares', 'proposal.loot'],
             ...transactionsTableState,
           }}
-          onStateChangeCallback={handleTableStateChange('transactions')}
+          onStateChangeCallback={handleTableStateChange(TableName.TRANSACTIONS)}
         />
       </div>
       <div className="space-y-2">
@@ -168,7 +175,9 @@ export const VaultDetail = (): JSX.Element => {
             pageSize: 20,
             ...tokenBalancesTableState,
           }}
-          onStateChangeCallback={handleTableStateChange('tokenBalances')}
+          onStateChangeCallback={handleTableStateChange(
+            TableName.TOKEN_BALANCES
+          )}
         />
       </div>
     </div>
