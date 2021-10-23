@@ -11,9 +11,9 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/table'
-import { merge } from 'lodash'
+import { debounce, merge } from 'lodash'
 import Papa from 'papaparse'
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback, useEffect } from 'react'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { GrDocumentCsv } from 'react-icons/gr'
 import {
@@ -132,18 +132,18 @@ interface TableOptions<T> {
   displayExportOptions?: boolean
 }
 
-// TODO: Empty State
-
 export default function Table<T extends Record<string, unknown>>({
   columns,
   data,
   initialState,
   options,
+  onStateChangeCallback,
 }: {
   columns: Column<T>[]
   data: T[]
   initialState?: Partial<TableState<T>>
   options?: TableOptions<T>
+  onStateChangeCallback: (state: TableState<T>) => void
 }): JSX.Element {
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -183,6 +183,15 @@ export default function Table<T extends Record<string, unknown>>({
     useExportData
   )
 
+  const debounceStateChange = useCallback(
+    debounce(onStateChangeCallback, 600),
+    []
+  )
+
+  useEffect(() => {
+    debounceStateChange(state)
+  }, [state])
+
   const DEFAULT_OPTIONS: TableOptions<Record<string, unknown>> = {
     onRowClick: undefined,
     displayGlobalSearch: true,
@@ -221,9 +230,12 @@ export default function Table<T extends Record<string, unknown>>({
                 borderColor="rgba(255, 255, 255, 0.2)"
               >
                 <Thead bg="brand.darkBlue1">
-                  {headerGroups.map((headerGroup) => (
-                    <>
-                      <Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroups.map((headerGroup, index) => (
+                    <Fragment key={index}>
+                      <Tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key={`table-header-group-1-${index}`}
+                      >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
                           // eslint-disable-next-line react/jsx-key
@@ -253,7 +265,10 @@ export default function Table<T extends Record<string, unknown>>({
                           </Th>
                         ))}
                       </Tr>
-                      <Tr {...headerGroup.getHeaderGroupProps()}>
+                      <Tr
+                        {...headerGroup.getHeaderGroupProps()}
+                        key={`table-header-group-2-${index}`}
+                      >
                         {headerGroup.headers.map((column) => (
                           // Add the sorting props to control sorting.
                           // eslint-disable-next-line react/jsx-key
@@ -266,7 +281,7 @@ export default function Table<T extends Record<string, unknown>>({
                           </Th>
                         ))}
                       </Tr>
-                    </>
+                    </Fragment>
                   ))}
                 </Thead>
                 <Tbody

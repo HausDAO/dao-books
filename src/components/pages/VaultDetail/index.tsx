@@ -1,6 +1,9 @@
+import { get } from 'lodash'
+import qs from 'qs'
 import { useEffect, useMemo, useState } from 'react'
-import { Helmet } from 'react-helmet'
-import { useParams } from 'react-router'
+import { Helmet } from 'react-helmet-async'
+import { useParams, useHistory, useLocation } from 'react-router'
+import { TableState } from 'react-table'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
 import { LoadingLogo } from '../../atoms'
@@ -8,9 +11,11 @@ import Table from '../../table/Table'
 import { BalanceCard } from './BalanceCard'
 import {
   MINION_COLUMNS,
+  TokenBalanceLineItem,
   TOKEN_BALANCES_COLUMNS,
   TRANSACTIONS_COLUMNS,
   TREASURY_COLUMNS,
+  VaultTransaction,
 } from './columns'
 import { getMinionDetailProps } from './getMinionDetailProps'
 import { getTreasuryDetailProps } from './getTreasuryDetailProps'
@@ -18,7 +23,14 @@ import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
 
+enum TableName {
+  TRANSACTIONS = 'transactions',
+  TOKEN_BALANCES = 'tokenBalances',
+}
+
 export const VaultDetail = (): JSX.Element => {
+  const history = useHistory()
+  const location = useLocation()
   const tokenBalancesColumns = useMemo(() => TOKEN_BALANCES_COLUMNS, [])
   const { daoAddress, minionAddress } =
     useParams<{ daoAddress: string; minionAddress?: string }>()
@@ -32,6 +44,13 @@ export const VaultDetail = (): JSX.Element => {
   }, [])
 
   const [props, setProps] = useState<any>({})
+  const [transactionsTableState, setTransactionsTableState] = useState<
+    Partial<TableState<VaultTransaction>>
+  >({})
+  const [tokenBalancesTableState, setTokenBalancesTableState] = useState<
+    Partial<TableState<TokenBalanceLineItem>>
+  >({})
+
   const updateProps = async () => {
     const data = await (async () => {
       if (minionAddress) {
@@ -44,8 +63,25 @@ export const VaultDetail = (): JSX.Element => {
     updateTheme(data?.daoMetadata)
   }
 
+  // set initial Tables filters based on current url queries
+  const updateInitialTableState = () => {
+    const URLState = qs.parse(location.search, { ignoreQueryPrefix: true })
+
+    setTransactionsTableState(
+      get(URLState, TableName.TRANSACTIONS, {}) as Partial<
+        TableState<VaultTransaction>
+      >
+    )
+    setTokenBalancesTableState(
+      get(URLState, TableName.TOKEN_BALANCES, {}) as Partial<
+        TableState<TokenBalanceLineItem>
+      >
+    )
+  }
+
   useEffect(() => {
     updateProps()
+    updateInitialTableState()
   }, [])
 
   const { daoMetadata, transactions, tokenBalances, vaultName, error } = props
@@ -61,6 +97,25 @@ export const VaultDetail = (): JSX.Element => {
   if (!daoMetadata) {
     return <Error />
   }
+
+  const handleTableStateChange =
+    (tableName: TableName) => (tableState: any) => {
+      const { filters, globalFilter, pageSize, sortBy } = tableState
+
+      const currentURLState = qs.parse(location.search, {
+        ignoreQueryPrefix: true,
+      })
+
+      const newURLParams = qs.stringify(
+        {
+          ...currentURLState,
+          [tableName]: { filters, globalFilter, pageSize, sortBy },
+        },
+        { addQueryPrefix: true }
+      )
+
+      history.replace(newURLParams)
+    }
 
   return (
     <div className="p-4 space-y-8">
@@ -106,7 +161,9 @@ export const VaultDetail = (): JSX.Element => {
           initialState={{
             pageSize: 20,
             hiddenColumns: ['proposal.shares', 'proposal.loot'],
+            ...transactionsTableState,
           }}
+          onStateChangeCallback={handleTableStateChange(TableName.TRANSACTIONS)}
         />
       </div>
       <div className="space-y-2">
@@ -117,7 +174,11 @@ export const VaultDetail = (): JSX.Element => {
           data={tokenBalances || []}
           initialState={{
             pageSize: 20,
+            ...tokenBalancesTableState,
           }}
+          onStateChangeCallback={handleTableStateChange(
+            TableName.TOKEN_BALANCES
+          )}
         />
       </div>
     </div>

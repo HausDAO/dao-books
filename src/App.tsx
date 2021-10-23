@@ -1,6 +1,6 @@
 import { Image } from '@chakra-ui/image'
 import { Box, Flex, Heading, Text } from '@chakra-ui/layout'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { SWRConfig } from 'swr'
 

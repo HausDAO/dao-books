@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import { HashRouter as Router } from 'react-router-dom'
 
@@ -9,11 +10,13 @@ import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-      <CustomThemeProvider>
-        <App />
-      </CustomThemeProvider>
-    </Router>
+    <HelmetProvider>
+      <Router>
+        <CustomThemeProvider>
+          <App />
+        </CustomThemeProvider>
+      </Router>
+    </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

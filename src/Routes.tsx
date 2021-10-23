@@ -11,21 +11,25 @@ const routes = [
     path: '/',
     component: Home,
     exact: true,
+    key: 'index',
   },
   {
     path: '/dao/:daoAddress',
     component: Vaults,
     exact: true,
+    key: '/dao/:daoAddress',
   },
   {
     path: '/dao/:daoAddress/treasury',
     component: VaultDetail,
     exact: true,
+    key: '/dao/:daoAddress/treasury',
   },
   {
     path: '/dao/:daoAddress/minion/:minionAddress',
     component: VaultDetail,
     exact: true,
+    key: '/dao/:daoAddress/minion/:minionAddress',
   },
 ]
 
