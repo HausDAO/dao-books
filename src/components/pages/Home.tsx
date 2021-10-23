@@ -11,8 +11,8 @@ import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 
-import { useCustomTheme } from '../../contexts/CustomThemeContext'
-import { DAOCard } from '../DAOCard'
+import { DAOCard } from '@/components'
+import { useCustomTheme } from '@/contexts/CustomThemeContext'
 
 const POPULAR_DAOS = [
   {

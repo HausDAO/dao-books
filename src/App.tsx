@@ -55,7 +55,7 @@ function App() {
             <Box
               sx={{ minHeight: 'calc(100vh - 5rem)' }}
               bgImage={getImageFromIPFSHash(theme?.images?.bg)}
-              backgroundSize="cover"
+              backgroundSize="100%"
             >
               <Box
                 sx={{ minHeight: 'calc(100vh - 5rem)' }}
