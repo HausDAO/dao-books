@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
+import { LoadingLogo } from '../../atoms'
 import Table from '../../table/Table'
 import { BalanceCard } from './BalanceCard'
 import {
@@ -50,7 +51,7 @@ export const VaultDetail = (): JSX.Element => {
   const { daoMetadata, transactions, tokenBalances, vaultName, error } = props
 
   if (!daoMetadata && !error) {
-    return <>Loading</>
+    return <LoadingLogo />
   }
 
   if (error) {

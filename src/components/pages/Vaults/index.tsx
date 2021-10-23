@@ -11,6 +11,7 @@ import { MinionWithTokenBalances, Moloch } from '../../../types/DAO'
 import { getDAOLink } from '../../../utils/web3/daohaus'
 import { getImageFromIPFSHash } from '../../../utils/web3/ipfs'
 import { VaultCard } from '../../VaultCard'
+import { LoadingLogo } from '../../atoms'
 import { getVaultsProps } from './getVaultsProps'
 
 import { Error } from '@/components/Error'
@@ -39,7 +40,7 @@ export const Vaults = (): JSX.Element => {
   const { daoMetadata, moloch, minions, error } = props
 
   if (!daoMetadata && !error) {
-    return <>Loading</>
+    return <LoadingLogo />
   }
 
   if (error) {
