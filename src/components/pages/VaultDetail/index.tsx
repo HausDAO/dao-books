@@ -1,27 +1,26 @@
+import { get } from 'lodash'
+import qs from 'qs'
 import { useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useParams, useHistory, useLocation } from 'react-router'
+import { TableState } from 'react-table'
 
 import { useCustomTheme } from '../../../contexts/CustomThemeContext'
-import { updateUrlQueries, stringifyArray } from '../../../utils/methods'
 import Table from '../../table/Table'
 import { BalanceCard } from './BalanceCard'
 import {
   MINION_COLUMNS,
+  TokenBalanceLineItem,
   TOKEN_BALANCES_COLUMNS,
   TRANSACTIONS_COLUMNS,
   TREASURY_COLUMNS,
+  VaultTransaction,
 } from './columns'
 import { getMinionDetailProps } from './getMinionDetailProps'
 import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 
 import { Error } from '@/components/Error'
 import { H1, H2 } from '@/components/atoms'
-
-const TRANSACTIONS_FILTERS_URL_QUERY_NAME = 'transactionsFilter'
-const TRANSACTIONS_GLOBAL_FILTER_URL_QUERY_NAME = 'transactionsGlobalFilter'
-const BALANCES_FILTERS_URL_QUERY_NAME = 'balancesFilter'
-const BALANCES_GLOBAL_FILTER_URL_QUERY_NAME = 'balancesGlobalFilter'
 
 export const VaultDetail = (): JSX.Element => {
   const history = useHistory()
@@ -39,11 +38,12 @@ export const VaultDetail = (): JSX.Element => {
   }, [])
 
   const [props, setProps] = useState<any>({})
-  const [transactionsFiltersInitState, setTransactionsFiltersInitState] =
-    useState<any>({})
-  const [balancesFiltersInitState, setBalancesFiltersInitState] = useState<any>(
-    {}
-  )
+  const [transactionsTableState, setTransactionsTableState] = useState<
+    Partial<TableState<VaultTransaction>>
+  >({})
+  const [tokenBalancesTableState, setTokenBalancesTableState] = useState<
+    Partial<TableState<TokenBalanceLineItem>>
+  >({})
 
   const updateProps = async () => {
     const data = await (async () => {
@@ -58,38 +58,22 @@ export const VaultDetail = (): JSX.Element => {
   }
 
   // set initial Tables filters based on current url queries
-  const updateInitialTableFilters = () => {
-    const uRLSearchParams = new URLSearchParams(location.search)
+  const updateInitialTableState = () => {
+    const URLState = qs.parse(location.search, { ignoreQueryPrefix: true })
 
-    const transactionsFilters = uRLSearchParams.getAll(
-      TRANSACTIONS_FILTERS_URL_QUERY_NAME
+    setTransactionsTableState(
+      get(URLState, 'transactions', {}) as Partial<TableState<VaultTransaction>>
     )
-    const transactionsFiltersStringified = stringifyArray(transactionsFilters)
-    const transactionsGlobalFilter = uRLSearchParams.get(
-      TRANSACTIONS_GLOBAL_FILTER_URL_QUERY_NAME
+    setTokenBalancesTableState(
+      get(URLState, 'tokenBalances', {}) as Partial<
+        TableState<TokenBalanceLineItem>
+      >
     )
-
-    const balancesFilters = uRLSearchParams.getAll(
-      BALANCES_FILTERS_URL_QUERY_NAME
-    )
-    const balancesFiltersStringified = stringifyArray(balancesFilters)
-    const balancesGlobalFilter = uRLSearchParams.get(
-      BALANCES_GLOBAL_FILTER_URL_QUERY_NAME
-    )
-
-    setTransactionsFiltersInitState({
-      filters: transactionsFiltersStringified,
-      globalFilter: transactionsGlobalFilter,
-    })
-    setBalancesFiltersInitState({
-      filters: balancesFiltersStringified,
-      globalFilter: balancesGlobalFilter,
-    })
   }
 
   useEffect(() => {
     updateProps()
-    updateInitialTableFilters()
+    updateInitialTableState()
   }, [])
 
   const { daoMetadata, transactions, tokenBalances, vaultName, error } = props
@@ -107,25 +91,22 @@ export const VaultDetail = (): JSX.Element => {
   }
 
   const handleTableStateChange =
-    (filtersQueryName: string, globalFilterQueryName: string) =>
-    (tableState: any) => {
-      const { filters, globalFilter } = tableState
-      const queryParams = new URLSearchParams(location.search)
+    (tableName: 'transactions' | 'tokenBalances') => (tableState: any) => {
+      const { filters, globalFilter, pageSize, sortBy } = tableState
 
-      // delete old filter queries first
-      queryParams.delete(filtersQueryName)
-      queryParams.delete(globalFilterQueryName)
+      const currentURLState = qs.parse(location.search, {
+        ignoreQueryPrefix: true,
+      })
 
-      filters.forEach((filter: object) =>
-        queryParams.append(filtersQueryName, JSON.stringify(filter))
+      const newURLParams = qs.stringify(
+        {
+          ...currentURLState,
+          [tableName]: { filters, globalFilter, pageSize, sortBy },
+        },
+        { addQueryPrefix: true }
       )
 
-      if (globalFilter) {
-        queryParams.append(globalFilterQueryName, globalFilter)
-      }
-
-      // add new filter queries to the url
-      updateUrlQueries(history, location.pathname, queryParams.toString())
+      history.replace(newURLParams)
     }
 
   return (
@@ -172,13 +153,9 @@ export const VaultDetail = (): JSX.Element => {
           initialState={{
             pageSize: 20,
             hiddenColumns: ['proposal.shares', 'proposal.loot'],
-            filters: transactionsFiltersInitState?.filters,
-            globalFilter: transactionsFiltersInitState?.globalFilter || '',
+            ...transactionsTableState,
           }}
-          onStateChangeCallback={handleTableStateChange(
-            TRANSACTIONS_FILTERS_URL_QUERY_NAME,
-            TRANSACTIONS_GLOBAL_FILTER_URL_QUERY_NAME
-          )}
+          onStateChangeCallback={handleTableStateChange('transactions')}
         />
       </div>
       <div className="space-y-2">
@@ -189,13 +166,9 @@ export const VaultDetail = (): JSX.Element => {
           data={tokenBalances || []}
           initialState={{
             pageSize: 20,
-            filters: balancesFiltersInitState?.filters,
-            globalFilter: balancesFiltersInitState?.globalFilter || '',
+            ...tokenBalancesTableState,
           }}
-          onStateChangeCallback={handleTableStateChange(
-            BALANCES_FILTERS_URL_QUERY_NAME,
-            BALANCES_GLOBAL_FILTER_URL_QUERY_NAME
-          )}
+          onStateChangeCallback={handleTableStateChange('tokenBalances')}
         />
       </div>
     </div>

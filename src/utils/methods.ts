@@ -41,17 +41,3 @@ export const formatNumber = (number?: number): string | undefined => {
     maximumFractionDigits: 2,
   })
 }
-
-export const updateUrlQueries = (
-  history: any,
-  pathname: string,
-  queryString: string
-) => {
-  history.push({
-    pathname,
-    search: queryString && queryString.length > 0 ? `?${queryString}` : '',
-  })
-}
-
-export const stringifyArray = (array: any) =>
-  array.map((stringifiedFilter: any) => JSON.parse(stringifiedFilter))

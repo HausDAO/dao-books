@@ -11,9 +11,9 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/table'
-import { merge } from 'lodash'
+import { debounce, merge } from 'lodash'
 import Papa from 'papaparse'
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useCallback, useEffect } from 'react'
 import { FaSort, FaSortDown, FaSortUp } from 'react-icons/fa'
 import { GrDocumentCsv } from 'react-icons/gr'
 import {
@@ -145,7 +145,7 @@ export default function Table<T extends Record<string, unknown>>({
   data: T[]
   initialState?: Partial<TableState<T>>
   options?: TableOptions<T>
-  onStateChangeCallback: (state: object) => void
+  onStateChangeCallback: (state: TableState<T>) => void
 }): JSX.Element {
   // Use the state and functions returned from useTable to build your UI
   const {
@@ -185,8 +185,14 @@ export default function Table<T extends Record<string, unknown>>({
     useExportData
   )
 
+  const debounceStateChange = useCallback(
+    debounce(onStateChangeCallback, 600),
+    []
+  )
+
+  console.log(state)
   useEffect(() => {
-    onStateChangeCallback(state)
+    debounceStateChange(state)
   }, [state])
 
   const DEFAULT_OPTIONS: TableOptions<Record<string, unknown>> = {
