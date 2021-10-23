@@ -31,24 +31,22 @@ export const CustomThemeProvider: FC = ({ children }) => {
       },
       colors: {
         interface: {
-          orange: {
-            base:
-              daoMetadata?.customThemeConfig?.primary500 ??
+          base:
+            daoMetadata?.customThemeConfig?.primary500 ??
+            //@ts-ignore
+            DEFAULT_THEME.colors.interface.base,
+          dark: darken(
+            0.1,
+            daoMetadata?.customThemeConfig?.primary500 ??
               //@ts-ignore
-              DEFAULT_THEME.colors.interface.orange.base,
-            dark: darken(
-              0.1,
-              daoMetadata?.customThemeConfig?.primary500 ??
-                //@ts-ignore
-                DEFAULT_THEME.colors.interface.orange.base
-            ),
-            light: lighten(
-              0.1,
-              daoMetadata?.customThemeConfig?.primary500 ??
-                //@ts-ignore
-                DEFAULT_THEME.colors.interface.orange.base
-            ),
-          },
+              DEFAULT_THEME.colors.interface.base
+          ),
+          light: lighten(
+            0.1,
+            daoMetadata?.customThemeConfig?.primary500 ??
+              //@ts-ignore
+              DEFAULT_THEME.colors.interface.base
+          ),
         },
       },
       images: {

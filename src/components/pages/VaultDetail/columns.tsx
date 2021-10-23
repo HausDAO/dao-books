@@ -2,15 +2,16 @@ import { BigNumber } from '@ethersproject/bignumber'
 import moment from 'moment'
 import { Cell, Column } from 'react-table'
 
-import { TokenBalance } from '../../../types/DAO'
 import {
+  DateRangeFilter,
+  filterByDate,
   AddressCell,
   MultiLineCell,
   SelectColumnFilter,
   TokenCell,
   WithExternalLinkCell,
-} from '../../table'
-import { DateRangeFilter, filterByDate } from '../../table/DateRangeFilter'
+} from '@/components'
+import { TokenBalance } from '@/types/DAO'
 
 export type VaultTransaction = {
   date: string | Date

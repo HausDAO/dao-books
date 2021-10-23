@@ -1,9 +1,8 @@
-import fetchGraph from '../../../utils/web3/fetchGraph'
-import { cacheTokenPrices } from '../../../utils/web3/token'
-
 import { getDAOMetadata } from '@/services/getDAOMetadata'
 import { getMinions } from '@/services/getMinions'
 import { Moloch } from '@/types/DAO'
+import fetchGraph from '@/utils/web3/fetchGraph'
+import { cacheTokenPrices } from '@/utils/web3/token'
 
 const GET_MOLOCH = `
 query moloch($contractAddr: String!) {

@@ -14,7 +14,7 @@ import { DayPicker, useInput, UseInputOptions } from 'react-day-picker'
 import { ColumnInstance } from 'react-table'
 import 'react-day-picker/style.css'
 
-import { momentUTC } from '../../utils/methods'
+import { momentUTC } from '@/utils/methods'
 
 /**
  * Sorry for using native date, moment and date-fns all together. Its messed up.

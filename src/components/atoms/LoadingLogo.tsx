@@ -2,7 +2,7 @@ import { Image } from '@chakra-ui/image'
 import { Flex } from '@chakra-ui/layout'
 import { FC } from 'react'
 
-import loadingImg from '../../assets/img/daobookssvg.svg'
+import loadingImg from '@/assets/img/daobookssvg.svg'
 
 export const LoadingLogo: FC = () => (
   <Flex
