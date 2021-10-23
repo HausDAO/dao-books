@@ -5,14 +5,14 @@ import {
   FormHelperText,
 } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
+import { Box, Heading, Link, Stack, Wrap, WrapItem } from '@chakra-ui/layout'
 import { FC, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useHistory } from 'react-router'
 
-import { useCustomTheme } from '../../contexts/CustomThemeContext'
-import { DAOCard } from '../DAOCard'
+import { DAOCard } from '@/components'
+import { useCustomTheme } from '@/contexts/CustomThemeContext'
 
 const POPULAR_DAOS = [
   {
@@ -78,13 +78,13 @@ export const Home: FC = () => {
       </Helmet>
       <Box>
         <Heading variant="h2" as="h2" mb="4">
-          Explore DAO Books
+          Lookup your DAO Books
         </Heading>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl maxWidth="3xl" id="address" mb="3" isRequired>
             <Input
-              placeholder="Enter DAO Address"
+              placeholder="Enter your DAO's Address"
               id="address"
               {...register('address', { required: true })}
             />
@@ -116,19 +116,13 @@ export const Home: FC = () => {
             )
           })}
         </Wrap>
-        <a
+        <Link
           href="https://app.daohaus.club/explore"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Text
-            _hover={{
-              textDecoration: 'underline',
-            }}
-          >
-            Explore All DAOs &rarr;
-          </Text>
-        </a>
+          Explore All DAOs &rarr;
+        </Link>
       </Stack>
     </Stack>
   )

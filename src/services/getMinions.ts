@@ -1,6 +1,6 @@
-import { CachedMinion, MinionWithTokenBalances } from '../types/DAO'
-import fetchJson from '../utils/fetchJson'
-import { DAO_HAUS_API_URL } from '../utils/web3/constants'
+import { CachedMinion, MinionWithTokenBalances } from '@/types/DAO'
+import fetchJson from '@/utils/fetchJson'
+import { DAO_HAUS_API_URL } from '@/utils/web3/constants'
 
 export const getMinions = async (
   daoAddress: string

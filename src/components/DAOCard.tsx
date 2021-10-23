@@ -4,8 +4,8 @@ import { Box, Flex, Stack, Text } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
 
-import { getImageFromIPFSHash } from '../utils/web3/ipfs'
-import { Card } from './atoms'
+import { Card } from '@/components'
+import { getImageFromIPFSHash } from '@/utils/web3/ipfs'
 type DAOCardProps = {
   dao: {
     name: string

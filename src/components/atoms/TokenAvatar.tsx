@@ -1,8 +1,8 @@
 import { Avatar } from '@chakra-ui/avatar'
 import { FC, useEffect, useState } from 'react'
 
-import { Token } from '../../types/DAO'
-import { getTokenImage } from '../../utils/web3/token'
+import { Token } from '@/types/DAO'
+import { getTokenImage } from '@/utils/web3/token'
 
 export const TokenAvatar: FC<{ token: Token }> = ({ token }) => {
   const [image, setImage] = useState<string>()

@@ -1,10 +1,11 @@
 import { Text } from '@chakra-ui/layout'
 import { FC, useEffect, useState } from 'react'
 
-import { formatNumber } from '../../../utils/methods'
-import { convertTokenValueToUSD } from '../../../utils/web3/token'
-import { Card } from '../../atoms'
 import { TokenBalanceLineItem } from './columns'
+
+import { Card } from '@/components'
+import { formatNumber } from '@/utils/methods'
+import { convertTokenValueToUSD } from '@/utils/web3/token'
 
 type VaultCardProps = {
   title: string

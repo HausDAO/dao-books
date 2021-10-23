@@ -1,12 +1,12 @@
+import { Link, Stack } from '@chakra-ui/layout'
 import { get } from 'lodash'
 import qs from 'qs'
 import { useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useParams, useHistory, useLocation } from 'react-router'
+import { Link as RouterLink } from 'react-router-dom'
 import { TableState } from 'react-table'
 
-import { useCustomTheme } from '../../../contexts/CustomThemeContext'
-import { LoadingLogo } from '../../atoms'
 import Table from '../../table/Table'
 import { BalanceCard } from './BalanceCard'
 import {
@@ -20,8 +20,10 @@ import {
 import { getMinionDetailProps } from './getMinionDetailProps'
 import { getTreasuryDetailProps } from './getTreasuryDetailProps'
 
+import { LoadingLogo, DAOHead } from '@/components'
 import { Error } from '@/components/Error'
-import { H1, H2 } from '@/components/atoms'
+import { H2 } from '@/components/atoms'
+import { useCustomTheme } from '@/contexts/CustomThemeContext'
 
 enum TableName {
   TRANSACTIONS = 'transactions',
@@ -118,7 +120,7 @@ export const VaultDetail = (): JSX.Element => {
     }
 
   return (
-    <div className="p-4 space-y-8">
+    <Stack spacing="8">
       <Helmet>
         {!!minionAddress && (
           <title>
@@ -129,10 +131,11 @@ export const VaultDetail = (): JSX.Element => {
           <title>Treasury | {daoMetadata.name} | DAO Books</title>
         )}
       </Helmet>
-      <div>
-        <H1>
-          {daoMetadata.name} - {vaultName}
-        </H1>
+      <div className="space-y-3">
+        <Link as={RouterLink} to={`/dao/${daoAddress}`}>
+          &larr; All Vaults
+        </Link>
+        <DAOHead daoMetadata={daoMetadata} />
       </div>
       <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
         <BalanceCard
@@ -181,6 +184,6 @@ export const VaultDetail = (): JSX.Element => {
           )}
         />
       </div>
-    </div>
+    </Stack>
   )
 }

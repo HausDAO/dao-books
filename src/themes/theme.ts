@@ -24,10 +24,10 @@ const Input: StyleConfig = {
         borderColor: 'white',
         bg: 'transparent',
         _hover: {
-          borderColor: 'interface.orange.base',
+          borderColor: 'interface.base',
         },
         _focus: {
-          borderColor: 'interface.orange.base',
+          borderColor: 'interface.base',
         },
       },
     },
@@ -35,7 +35,7 @@ const Input: StyleConfig = {
   defaultProps: {
     variant: 'outline',
     // @ts-ignore
-    focusBorderColor: 'interface.orange.base',
+    focusBorderColor: 'interface.base',
   },
 }
 
@@ -43,17 +43,25 @@ const Button: StyleConfig = {
   variants: {
     solid: {
       color: 'white',
-      bg: 'interface.orange.base',
+      bg: 'interface.base',
       _hover: {
-        bg: 'interface.orange.dark',
+        bg: 'interface.dark',
+      },
+      _active: {
+        bg: 'interface.dark',
       },
     },
     outline: {
-      borderColor: 'interface.orange.base',
-      color: 'interface.orange.base',
+      borderColor: 'interface.base',
+      color: 'interface.base',
       _hover: {
-        borderColor: 'interface.orange.dark',
-        color: 'interface.orange.dark',
+        borderColor: 'interface.dark',
+        color: 'interface.dark',
+        bg: 'transparent',
+      },
+      _active: {
+        borderColor: 'interface.dark',
+        color: 'interface.dark',
         bg: 'transparent',
       },
     },
@@ -81,11 +89,9 @@ export const DEFAULT_THEME: DAOTheme = {
       darkBlue2: '#0E1235',
     },
     interface: {
-      orange: {
-        base: '#ED963A',
-        dark: '#CA7D2C',
-        light: '#F3AC61',
-      },
+      base: '#ED963A',
+      dark: '#CA7D2C',
+      light: '#F3AC61',
     },
   },
   images: {
@@ -95,9 +101,10 @@ export const DEFAULT_THEME: DAOTheme = {
 
 const Link = {
   baseStyle: {
-    color: 'interface.orange.base',
+    color: 'interface.base',
     _hover: {
-      color: 'interface.orange.dark',
+      textDecoration: 'none',
+      color: 'interface.dark',
     },
   },
 }

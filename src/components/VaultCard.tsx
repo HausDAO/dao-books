@@ -3,10 +3,10 @@ import { Flex, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useEffect, useState, FC } from 'react'
 import { Link } from 'react-router-dom'
 
-import { TokenBalance } from '../types/DAO'
-import { formatNumber } from '../utils/methods'
-import { convertTokenValueToUSD } from '../utils/web3/token'
-import { Card, TokenAvatar } from './atoms'
+import { Card, TokenAvatar } from '@/components'
+import { TokenBalance } from '@/types/DAO'
+import { formatNumber } from '@/utils/methods'
+import { convertTokenValueToUSD } from '@/utils/web3/token'
 type VaultCardProps = {
   type: string
   daoAddress: string

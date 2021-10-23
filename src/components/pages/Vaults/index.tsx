@@ -1,20 +1,15 @@
-import { Avatar } from '@chakra-ui/avatar'
-import { Button } from '@chakra-ui/button'
-import { Flex, Spacer, Stack, Text, Wrap, WrapItem } from '@chakra-ui/layout'
+import { Spacer, Stack, Wrap, WrapItem } from '@chakra-ui/layout'
 import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useParams } from 'react-router-dom'
 
-import { useCustomTheme } from '../../../contexts/CustomThemeContext'
-import { DaoMetadata } from '../../../hooks/useDaoMetadata/types'
-import { MinionWithTokenBalances, Moloch } from '../../../types/DAO'
-import { getDAOLink } from '../../../utils/web3/daohaus'
-import { getImageFromIPFSHash } from '../../../utils/web3/ipfs'
-import { VaultCard } from '../../VaultCard'
-import { LoadingLogo } from '../../atoms'
 import { getVaultsProps } from './getVaultsProps'
 
+import { DAOHead, VaultCard, LoadingLogo } from '@/components'
 import { Error } from '@/components/Error'
+import { useCustomTheme } from '@/contexts/CustomThemeContext'
+import { DaoMetadata } from '@/hooks/useDaoMetadata/types'
+import { MinionWithTokenBalances, Moloch } from '@/types/DAO'
 
 export const Vaults = (): JSX.Element => {
   const { daoAddress } = useParams<{ daoAddress: string }>()
@@ -56,23 +51,7 @@ export const Vaults = (): JSX.Element => {
       <Helmet>
         <title>{daoMetadata.name} | DAO Books</title>
       </Helmet>
-      <Flex justify="space-between">
-        <Flex alignItems="center">
-          <Avatar
-            w="12"
-            src={getImageFromIPFSHash(daoMetadata.avatarImg)}
-            mr="4"
-          />
-          <Text fontSize="xl">{daoMetadata.name}</Text>
-        </Flex>
-        <a
-          href={getDAOLink({ network: daoMetadata.network, daoAddress })}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button>Visit DAO</Button>
-        </a>
-      </Flex>
+      <DAOHead daoMetadata={daoMetadata} />
 
       <Wrap spacing="8">
         <WrapItem>
