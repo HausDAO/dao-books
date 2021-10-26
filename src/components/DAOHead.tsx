@@ -1,6 +1,8 @@
 import { Avatar } from '@chakra-ui/avatar'
 import { Button } from '@chakra-ui/button'
+import { Image } from '@chakra-ui/image'
 import { Flex, Text } from '@chakra-ui/layout'
+import makeBlockie from 'ethereum-blockies-base64'
 import { FC } from 'react'
 
 import { DaoMetadata } from '@/hooks/useDaoMetadata/types'
@@ -15,6 +17,12 @@ export const DAOHead: FC<{ daoMetadata: DaoMetadata }> = ({ daoMetadata }) => {
           w="12"
           src={getImageFromIPFSHash(daoMetadata.avatarImg)}
           mr="4"
+          icon={
+            <Image
+              rounded="full"
+              src={makeBlockie(daoMetadata.contractAddress)}
+            />
+          }
         />
         <Text fontSize="xl">{daoMetadata.name}</Text>
       </Flex>

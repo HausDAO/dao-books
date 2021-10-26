@@ -1,4 +1,6 @@
 import { Avatar } from '@chakra-ui/avatar'
+import { Image } from '@chakra-ui/image'
+import makeBlockie from 'ethereum-blockies-base64'
 import { FC, useEffect, useState } from 'react'
 
 import { Token } from '@/types/DAO'
@@ -14,6 +16,12 @@ export const TokenAvatar: FC<{ token: Token }> = ({ token }) => {
     getImage()
   }, [])
   return (
-    <Avatar w="6" h="6" src={image} name={token.symbol} title={token.symbol} />
+    <Avatar
+      w="6"
+      h="6"
+      src={image}
+      title={token.symbol}
+      icon={<Image rounded="full" src={makeBlockie(token.tokenAddress)} />}
+    />
   )
 }
