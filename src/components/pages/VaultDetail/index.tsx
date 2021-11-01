@@ -122,20 +122,21 @@ export const VaultDetail = (): JSX.Element => {
   return (
     <Stack spacing="8">
       <Helmet>
-        {!!minionAddress && (
-          <title>
-            {vaultName} | {daoMetadata.name} | DAO Books
-          </title>
-        )}
-        {!minionAddress && (
-          <title>Treasury | {daoMetadata.name} | DAO Books</title>
-        )}
+        <title>
+          {minionAddress ? vaultName : 'Treasury'} | {daoMetadata.name} | DAO
+          Books
+        </title>
       </Helmet>
       <div className="space-y-3">
         <Link as={RouterLink} to={`/dao/${daoAddress}`}>
           &larr; All Vaults
         </Link>
-        <DAOHead daoMetadata={daoMetadata} />
+        <DAOHead
+          title={`${minionAddress ? vaultName : 'Treasury'} | ${
+            daoMetadata.name
+          }`}
+          daoMetadata={daoMetadata}
+        />
       </div>
       <div className="flex flex-wrap gap-3 md:gap-6 lg:gap-9">
         <BalanceCard

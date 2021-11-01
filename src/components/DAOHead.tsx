@@ -9,7 +9,10 @@ import { DaoMetadata } from '@/hooks/useDaoMetadata/types'
 import { getDAOLink } from '@/utils/web3/daohaus'
 import { getImageFromIPFSHash } from '@/utils/web3/ipfs'
 
-export const DAOHead: FC<{ daoMetadata: DaoMetadata }> = ({ daoMetadata }) => {
+export const DAOHead: FC<{ daoMetadata: DaoMetadata; title?: string }> = ({
+  daoMetadata,
+  title,
+}) => {
   return (
     <Flex justify="space-between" wrap="wrap">
       <Flex alignItems="center">
@@ -24,7 +27,7 @@ export const DAOHead: FC<{ daoMetadata: DaoMetadata }> = ({ daoMetadata }) => {
             />
           }
         />
-        <Text fontSize="xl">{daoMetadata.name}</Text>
+        <Text fontSize="xl">{title ? title : daoMetadata.name}</Text>
       </Flex>
       <a
         href={getDAOLink({
